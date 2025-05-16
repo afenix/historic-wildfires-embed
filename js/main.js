@@ -9,8 +9,8 @@
 // Set the Global variables
 const mapParams = {
     'containerID': 'map-container',
-    'center':  [45, -100],
-    'zoom': 3
+    'center':  [39, -100],
+    'zoom': 5
 }
 const dataDates = {
     'fire-history': {
