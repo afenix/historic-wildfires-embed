@@ -917,7 +917,7 @@ svg:not(:root) {
 }
 
 .legendLabel-proportional:nth-child(4) {
-    margin: 0 0 0 0; /* Reduced margin for the third image */
+    margin: 0 0 0 0; /* Reduced margin for the fourth image */
 }
 
 
@@ -927,22 +927,23 @@ svg:not(:root) {
 
 #floating-chart {
     position: absolute;
-    bottom: 100px; /* Adjust position as needed */
+    bottom: 20px;
     left: 20px;
     z-index: 1000;
-    background: rgba(0, 0, 0, 0.6); /* Optional for better contrast */
+    background: rgba(0, 0, 0, 0.6);
     padding: 10px;
     border-radius: 8px;
+    max-width: 700px;
 }
 
 .axis path,
 .axis line {
-    stroke: white; /* Change color of axes lines and ticks to white */
+    stroke: white;
 }
 
 /* Style for axes text */
 .axis text {
-    fill: white; /* Change color of text to white */
+    fill: white;
     font-family: "Reem Kufi Fun", sans-serif;
     font-size: 12px;
     font-weight: bold;
@@ -976,21 +977,6 @@ svg:not(:root) {
     font-size: 16px;
 }
 
-.year-info-box {
-  position: absolute;
-  bottom: 100px;
-  left: 20px;
-  background: white;
-  color: black;
-  border: 2px solid black;
-  border-radius: 8px;
-  padding: 15px;
-  max-width: 300px;
-  z-index: 1000;
-  font-family: "Reem Kufi Fun", sans-serif;
-}
-
-
 .popup {
     position: fixed;
     top: 50%;
@@ -1000,7 +986,7 @@ svg:not(:root) {
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    z-index: 1000; /* Ensure it's on top */
+    z-index: 1000;
   }
 
 

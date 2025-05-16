@@ -10,7 +10,7 @@
 const mapParams = {
     'containerID': 'map-container',
     'center':  [39, -100],
-    'zoom': 5
+    'zoom': 4
 }
 const dataDates = {
     'fire-history': {
@@ -402,43 +402,60 @@ const setupSliderAndButtons = (years) => {
     const rangeValueDisplay = document.getElementById('range-value');
     const reverseButton = document.getElementById('reverse');
     const forwardButton = document.getElementById('forward');
+    const playButton = document.getElementById('play');
+    const pauseButton = document.getElementById('pause');
 
-    // Set the slider properties based on the years array
-    slider.min = 0;  // Start index at 0 for simplicity in indexing
-    slider.max = years.length - 1;  // Max index is the last index in the years array
-    slider.value = 0;  // Default to the first year
-    rangeValueDisplay.textContent = years[0];
+    let animationInterval = null;
 
-     // Function to update the slider appearance and value
+    // Update visual and map
     function updateSliderAppearance(index) {
         const percentage = (index / (years.length - 1)) * 100;
         slider.style.background = `linear-gradient(to right, red ${percentage}%, grey ${percentage}%)`;
         rangeValueDisplay.textContent = years[index];
-        filterMapByYear(years[index]);
+        filterMapByYear(years[index]); // <- your existing map update function
     }
 
-    // Initial map load with the first year
-    updateSliderAppearance(0);
+    // Move to a specific year
+    function setYear(index) {
+        slider.value = index;
+        updateSliderAppearance(index);
+    }
 
-    // Event listener for manual slider adjustments
-    slider.oninput = () => {
-        updateSliderAppearance(parseInt(slider.value, 10));
-    };
+    // Start auto-play
+    function startAnimation() {
+        if (animationInterval) return; // don't double-run
 
-    // Setup button functionalities to adjust slider
-    reverseButton.addEventListener('click', function() {
-        if (parseInt(slider.value, 10) > 0) {
-            slider.value = parseInt(slider.value, 10) - 1;
-            updateSliderAppearance(slider.value);
-        }
-    });
+        animationInterval = setInterval(() => {
+            let current = parseInt(slider.value, 10);
+            if (current < years.length - 1) {
+                setYear(current + 1);
+            } else {
+                stopAnimation();
+            }
+        }, 1000); // Change speed here (1000ms = 1 sec per year)
+    }
 
-    forwardButton.addEventListener('click', function() {
-        if (parseInt(slider.value, 10) < years.length - 1) {
-            slider.value = parseInt(slider.value, 10) + 1;
-            updateSliderAppearance(slider.value);
-        }
-    });
+    // Stop auto-play
+    function stopAnimation() {
+        clearInterval(animationInterval);
+        animationInterval = null;
+    }
+
+    // Set slider bounds
+    slider.min = 0;
+    slider.max = years.length - 1;
+    setYear(0); // Load first year
+
+    // Manual controls
+    slider.oninput = () => setYear(parseInt(slider.value, 10));
+    reverseButton.onclick = () => setYear(Math.max(0, slider.value - 1));
+    forwardButton.onclick = () => setYear(Math.min(years.length - 1, parseInt(slider.value, 10) + 1));
+
+    playButton.onclick = startAnimation;
+    pauseButton.onclick = stopAnimation;
+
+    // 👇 Optional: start animating immediately on load
+    startAnimation();
 };
 
 /**
