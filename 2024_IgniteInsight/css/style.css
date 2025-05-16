@@ -1,0 +1,1010 @@
+
+* {
+    box-sizing: border-box;
+}
+
+body,
+html {
+    height: 100%;
+    width: 100%;
+    /* Ensure the full height of the page is used */
+    margin: 0;
+    /* Remove default margin */
+    padding: 0;
+    /* Remove default padding */
+    overflow: hidden;
+    /* Prevent scrolling on the body directly */
+}
+
+#map-container {
+    height: 100%;
+    width: auto;
+}
+
+#map-title {
+    justify-content: center; /* Center elements horizontally */
+    width: 100%; /* Make the container take full width of the page */
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    font-family: "Reem Kufi Fun", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: regular;
+    font-size: 24px;
+    color: black;
+    display: inline-flex; /* Use inline-flex instead of flex */
+    align-items: center;
+}
+
+.fire-year {
+    color: black;
+    font-weight: bold;
+    font-style: italic;
+    font-size: 18px;
+}
+
+.total-fire-acres {
+    color: black;
+    font-weight: bold;
+    font-style: italic;
+    font-size: 18px;
+}
+
+.fire-year {
+    color: black;
+    font-weight: bold;
+    font-style: italic;
+    font-size: 18px;
+}
+
+#wildfire-acres {
+    color: black;
+    font-weight: bold;
+    font-style: italic;
+    font-size: 18px;
+}
+
+#prescribed-acres {
+    color: black;
+    font-weight: bold;
+    font-style: italic;
+    font-size: 18px;
+}
+
+#wildland-fire-use-acres {
+    color: black;
+    font-weight: bold;
+    font-style: italic;
+    font-size: 18px;
+}
+
+#unknown-acres {
+    color: black;
+    font-weight: bold;
+    font-style: italic;
+    font-size: 18px;
+}
+
+/* ================================================================================== */
+/* Custom leaflet map controls  */
+/* ================================================================================== */
+
+.leaflet-control-custom.home-button {
+    margin-left: 11px !important;
+    font-family: "Reem Kufi Fun", sans-serif !important;
+}
+
+.leaflet-control-custom.home-button:hover {
+    margin-left: 11px !important;
+    background-color: #e8e7e3 !important;
+}
+
+.leaflet-control-custom.home-button[data-tooltip]::after { /* This targets the tooltip itself */
+    content: attr(data-tooltip);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 8px;
+    position: absolute;
+    opacity: 0;          /* Make tooltip initially invisible */
+    transition: opacity 0.3s; /* Add a transition for a smooth effect */
+    margin: 0 0 0 100px !important;
+}
+
+.leaflet-control-custom.home-button:hover[data-tooltip]::after {
+    opacity: 1; /* Show the tooltip on hover */
+    margin: 0 0 0 100px !important;
+}
+
+.leaflet-control-custom.zoom-user-button {
+    margin-left: 11px !important;
+    font-family: "Reem Kufi Fun", sans-serif !important;
+}
+
+.leaflet-control-custom.zoom-user-button:hover {
+    margin-left: 11px !important;
+    background-color: #e8e7e3 !important;
+}
+
+.leaflet-control-custom.zoom-user-button[data-tooltip]::after { /* This targets the tooltip itself */
+    content: attr(data-tooltip);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px;
+    position: absolute;
+    opacity: 0;          /* Make tooltip initially invisible */
+    transition: opacity 0.3s; /* Add a transition for a smooth effect */
+    margin: 0 0 0 100px !important;
+}
+
+.leaflet-control-custom.zoom-user-button:hover[data-tooltip]::after {
+    opacity: 1; /* Show the tooltip on hover */
+    margin: 0 0 0 100px !important;
+}
+
+
+.leaflet-control-custom.region-button {
+    margin-left: 11px !important;
+    font-family: "Reem Kufi Fun", sans-serif !important;
+}
+
+.leaflet-control-custom.region-button:hover {
+    background-color: #e8e7e3 !important;
+}
+
+.leaflet-control-custom.region-button[data-tooltip]::after { /* This targets the tooltip itself */
+    content: attr(data-tooltip);
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 5px;
+    position: absolute;
+    opacity: 0;          /* Make tooltip initially invisible */
+    transition: opacity 0.3s; /* Add a transition for a smooth effect */
+    margin: 0 0 0 120px !important;
+}
+
+.leaflet-control-custom.region-button:hover[data-tooltip]::after {
+    opacity: 1; /* Show the tooltip on hover */
+    margin: 0 0 0 120px !important;
+}
+
+.leaflet-marker-icon.fire-icon {
+    opacity: 0.8;
+ }
+
+.leaflet-tooltip {
+    font-family: "Reem Kufi Fun", sans-serif; /* Your desired font */
+    font-size: 14px; /* Adjust font size if needed */
+    background-color: rgba(255, 255, 255, 0.9);  /* Semi-transparent background */
+    border: 1px solid #333; /* Optional border */
+    box-shadow: 0 1px 7px rgba(0, 0, 0, 0.4); /* Optional shadow */
+    padding: 20px;
+}
+
+/* ================================================================================== */
+/* Splash Screen  */
+/* ================================================================================== */
+
+/* CSS for fading in the splash screen */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+.splash-screen.fade-out {
+    animation: fadeOut 0.5s ease-out forwards;
+}
+
+.header-container {
+    display: inline-flex; /* Use inline-flex instead of flex */
+    align-items: center;  /* Maintain vertical alignment */
+}
+
+#splash-welcome {
+    color: #E85D04;
+    font-size: 36px;
+    font-family: "Reem Kufi Fun", sans-serif; /
+}
+
+.splash-subtitle {
+    margin-bottom: 0;
+}
+
+.splash-screen {
+    display: none;  /* Start hidden and toggle this with JavaScript */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
+    z-index: 2000; /* Ensure it's above other content */
+    animation: fadeIn 1s ease-out forwards; /* Apply the animation */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url('../img/DALLE-fire2.jpg'); /* Path to your background image */
+    background-size: cover; /* Cover the entire area of the modal */
+    background-position: center; /* Center the background image */
+    background-repeat: no-repeat; /* Do not repeat the image */
+    height: 100%; /* Ensure the div takes up the full height of its container */
+    width: 100%; /* Ensure the div takes up the full width of its container */
+}
+
+.splash-modal {
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 60%;
+    text-align: center;
+    background-color: rgba(37, 35, 35, 1);
+}
+
+.welcome-message h1 {
+    font-family: "Reem Kufi Fun", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: regular;
+    font-size: 25px;
+    color: white;
+
+}
+
+.welcome-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 3em 0 3em;
+    font-family: "Reem Kufi Fun", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: regular;
+    font-size: 16px;
+    color: white;
+    text-align: left;
+    border-radius: 10px;
+
+}
+
+#close-splash {
+    display: block;
+    margin: 0 auto;
+    font-family: "Reem Kufi Fun", sans-serif;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+}
+
+/* Style for the button on hover */
+#close-splash:hover {
+    background-color: #E85D04;
+    color: white; /* Example: Darker green on hover */
+    /*background-image: url("https://media.giphy.com/media/Lopx9eUi34rbq/giphy.gif"); /* Direct URL to the GIF */
+  }
+
+/* ================================================================================== */
+/* Map Narrative Scrollable Sidepanel  */
+/* ================================================================================== */
+
+#side-panel-container {
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 33.33%;
+    height: 100%;
+    overflow-y: auto; /* Enable scrolling on the side panel */
+    transition: right 0.5s;
+    z-index: 1000;
+    display: flex; /* Activate Flexbox */
+    flex-direction: column; /* Arrange items in a column */
+    justify-content: center; /* (Keep this if you want centering) */
+    align-items: center; /* (Keep this if you want centering)*/
+    background-image: url('../img/DALLE-fire2.jpg');
+    background-size: cover;
+    background-position: center;
+    box-sizing: border-box;
+  }
+
+#side-panel-container.closed {
+    right: -33.33%;
+}
+
+#map-container.expanded {
+    width: 100%;
+}
+
+#map-narrative {
+    order: 1;
+    max-height: 68%;
+    font-family: "Reem Kufi Fun", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: regular;
+    font-size: 16px;
+    color: rgba(0, 0, 0, 1);
+    width: 95%;
+    max-width: 500px;
+    overflow: auto;
+    padding: 0 20px 0 20px;
+    /* background: rgba(38, 37, 37, 0.8); */
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+}
+
+#wildfire-history-section {
+    min-height: 300px; /* Adjust the height as needed */
+    overflow-y: auto;  /* Add a scrollbar if the content exceeds the height */
+}
+
+#toggle-panel-btn {
+    position: absolute;
+    bottom: 15px;
+    right: 1rem;
+    background: rgb(232, 229, 127);
+    color: black;
+    border: none;
+    padding: 5px;
+    border-radius: 10%;
+    cursor: pointer;
+    z-index: 1000;
+    font-family: "Reem Kufi Fun", sans-serif;
+}
+
+/* ================================================================================== */
+/* SIDE BAR  */
+/* ================================================================================== */
+
+/* Adjusting root SVG and hidden state remains unchanged */
+svg:not(:root) {
+    overflow: hidden;
+}
+
+.hidden {
+    display: none;
+}
+
+.sidebar {
+    display: flex;
+    position: absolute;
+    right: 10px;
+    width: auto;
+    max-width: 480px;
+    z-index: 1000;
+    background-color: transparent;
+    box-shadow: none;
+    overflow: hidden;
+    height: 100%;
+}
+
+/* Style the menu item area with white background */
+.sidebar-menu li.menu-item {
+    background: #fff;
+    padding: 10px 11px;
+    cursor: pointer;
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    margin-top: 0px;
+}
+
+.active-sidebar .sidebar-menu li.menu-item {
+    background: #ff5100;
+}
+
+.active-sidebar .sidebar {
+    background-color: #fff;
+}
+
+.leaflet-right {
+    transform: translateX(-55px);
+}
+
+.active-sidebar .leaflet-right {
+    transform: translateX(-490px);
+    transition: transform 350ms;
+}
+
+.active-sidebar .sidebar::after {
+    background-color: #fff;
+}
+
+@media (min-width: 768px) {
+    .sidebar {
+        top: 10px;
+        right: 10px;
+        height: calc(100% - 60px);
+        transition: width 500ms;
+    }
+
+    .leaflet-right {
+        transform: translateX(-55px);
+    }
+
+    .active-sidebar .sidebar {
+        max-width: 480px;
+        width: 100%;
+        transition: width 1s;
+    }
+}
+
+.close-button {
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 8px;
+    border: none;
+    padding: 5px;
+    margin: 0;
+    padding: 0;
+    border-radius: 3px;
+    background: none;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1000;
+}
+
+.active-sidebar .close-button {
+    pointer-events: all;
+    opacity: 1;
+    transition: opacity 100ms ease-in-out;
+}
+
+.active-content {
+    display: block;
+}
+
+.active-item {
+    background: #ff5100;
+}
+
+.active-item svg {
+    fill: #fff;
+}
+
+.sidebar .close-button svg {
+    fill: #fff;
+}
+
+.sidebar::before {
+    position: absolute;
+    content: "";
+    z-index: -1;
+    top: 0;
+    left: 44px;
+    width: 100%;
+    height: 40px;
+    background: black;
+}
+
+.active-sidebar .sidebar::before {
+    left: 42px;
+}
+
+.sidebar svg {
+    display: block;
+    width: 20px;
+    height: 20px;
+    fill: #3f3f3f;
+    pointer-events: none;
+}
+
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    list-style: none;
+    padding: 0;
+    align-items: flex-end;
+    margin-top: 0px;
+}
+
+.sidebar-menu li {
+    padding: 10px 11px;
+    cursor: pointer;
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    margin-top: 0px;
+}
+
+.sidebar-menu li:hover svg {
+    animation: slide-left 500ms ease-in;
+}
+
+@keyframes slide-left {
+    from {
+        transform: translateX(0px);
+    }
+
+    to {
+        transform: translateX(5px);
+    }
+}
+
+.sidebar-content {
+    width: 100%;
+    opacity: 0;
+    pointer-events: none;
+    margin-bottom: 15px;
+    transition: opacity 500ms;
+    overflow: auto;
+    font-size: 14px;
+    font-family: "Reem Kufi Fun", sans-serif;
+}
+
+.sidebar-content h2 {
+    margin-top: 10px !important;
+    padding: 0px 0px 0px 10px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+    color: black;
+    white-space: nowrap;
+    width: calc(100% - 10px);
+    height: 25px;
+    margin: 0;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    font-size: 18px;
+    font-family: "Reem Kufi Fun", sans-serif;
+}
+
+.active-sidebar .sidebar-content {
+    opacity: 1;
+    pointer-events: visible;
+    transition: opacity 200ms;
+}
+
+.active-sidebar .item-content {
+    display: block;
+}
+
+.main-title {
+    margin-top: 10px !important;
+    padding: 0px 0px 0px 10px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    letter-spacing: 1px;
+    color: white;
+    white-space: nowrap;
+    width: calc(100% - 10px);
+    height: 25px;
+    margin: 0;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    font-size: 18px;
+    font-family: "Reem Kufi Fun", sans-serif;
+}
+
+
+.item-content {
+    display: none;
+    margin-top: 8px;
+    padding-right: 10px;
+    height: 100%;
+}
+
+.item-content .content {
+    overflow: auto;
+    margin-top: 15px;
+    height: calc(100% - 50px);
+    padding-right: 10px;
+}
+
+/* ================================================================================== */
+/* Temporal slider  */
+/* ================================================================================== */
+
+#slider-container {
+    float: right;
+}
+
+.slider {
+    position: absolute;
+    left: 50%;
+    bottom: 20px;
+    transform: translateX(-50%);
+    background: rgba(252, 252, 252, 0.2);
+    box-shadow: 0px 15px 40px rgba(126, 109, 87, 0.4);
+    width: 25%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    z-index: 500;
+}
+
+#header-container {
+    display: flex;
+    align-items: center; /* Vertically center the contents */
+    position: absolute;
+    top: 20px; /* Adjust as needed */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+}
+
+#header-text {
+    font-family: "Reem Kufi Fun", sans-serif;
+    font-size: 1.5rem;
+    color: white;
+    margin-right: 10px; /* Space between the text and the number */
+}
+
+#range-value {
+    font-family: "Reem Kufi Fun", sans-serif;
+    font-size: 3rem; /* Larger and more pronounced */
+    color: white;
+}
+
+#wildfire-total {
+    position: absolute;
+    left: 58%;
+    bottom: 20px;
+    transform: translateX(-50%);
+    text-align: center;
+    padding: 10px 0;
+    z-index: 500;
+    font-size: 16px;
+    font-family: "Reem Kufi Fun", sans-serif;
+    color: black;
+}
+
+#total-count {
+    font-size: 18px;
+    font-family: "Reem Kufi Fun", sans-serif;
+    font-weight: bold;
+}
+
+.range {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 420px;
+    height: 2px;
+    background: transparent;
+    border: none;
+    outline: none;
+}
+
+.range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    background: red;
+    border: 2px solid rgb(249, 249, 249);
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.range::-webkit-slider-thumb:hover {
+    background: red;
+    width: 22px;
+    height: 22px;
+    border: 2px solid rgb(249, 249, 249);
+    border-radius: 50%;
+}
+
+.button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 60px;
+    border: none;
+    background-color: rgba(0, 0, 0, 0);
+    cursor: pointer;
+    z-index: 1000;
+}
+
+.button img {
+    width: 100%;
+}
+
+/* ================================================================================== */
+/* MAP POPUPS  */
+/* ================================================================================== */
+
+#popup-content {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: block;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    max-width: 300px;
+    color: #333;
+    font-family: "Cairo Play", sans-serif;
+}
+
+#popup-content h3 {
+    font-family: "Cairo Play", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: bold;
+    color: #ff5100;
+    margin-top: 0;
+}
+
+#popup-content p {
+    font-size: 18px;
+    line-height: 1.6;
+}
+
+#popup-content p strong {
+    color: #000;
+}
+
+.leaflet-popup-content {
+    font-family: "Reem Kufi Fun", sans-serif !important;
+    color: #333;
+    font-size: 16px;
+}
+
+.leaflet-popup-content-wrapper {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+.leaflet-popup-tip {
+    background: rgba(255, 255, 255, 0.8);
+}
+
+/* ================================================================================== */
+/* LEGEND */
+/* ================================================================================== */
+
+.legend-container {
+    transition: all 0.3s ease; /* Smooth transition for toggling visibility */
+    order: 2;
+    flex-direction: column; /* Stack children vertically */
+    align-items: center; /* Center items horizontally within the container */
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    position: absolute; /* Position it absolutely within its parent */
+    bottom: 50px; /* Distance from the bottom edge */
+    right: 20px;  /* Distance from the right edge */
+    display: none; /* Hidden by default */
+}
+
+.legend-toggle {
+    position: absolute;
+    bottom: 50px; /* Align with the bottom of the legend */
+    right: 20px; /* Align with the left of the legend */
+    z-index: 1001; /* Ensure it's above the legend */
+}
+
+#toggle-legend-button {
+    cursor: pointer;
+    padding: 5px;
+    margin: 5px;
+    background-color: #ff5100;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-family: "Reem Kufi Fun", sans-serif;
+    font-size: 12px;
+}
+
+#legend-title {
+    font-family: "Reem Kufi Fun", sans-serif;
+    font-size: 20px;
+    text-align: center;
+    margin-bottom: 10px; /* Adds space between the title and the next element */
+    font-variant: small-caps;
+    width: 100%; /* Ensures the title spans the full width of its container */
+}
+
+.columns-wrapper {
+    display: flex;
+    justify-content: space-between; /* Space items equally horizontally */
+    /* width: 100%; Match width to the parent container */
+    flex-direction: column; /* Stack elements vertically */
+    width: 100%; /* Match width to the parent container */
+}
+
+
+#cloropleth-container {
+    /* width: 40%; */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.column-header-cloropleth {
+    font-family: "Reem Kufi Fun", sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 8px; /* Space below headers */
+    color: #333;
+    text-align: left; /* Align header text to the left */
+}
+
+.legend-item-cloropleth {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.legend-item-cloropleth img {
+    margin-right: 10px;
+    width: 40px; /* Adjust as needed */
+    height: 40px; /* Adjust as needed */
+}
+
+.legendValue-cloropleth {
+    font-family: "Reem Kufi Fun", sans-serif;
+    font-size: 16px;
+    white-space: nowrap;
+}
+
+#proportional-container {
+    /* width: 55%; */
+    display: grid; /* Use grid layout */
+    grid-template-columns: auto 1fr; /* Single column for the entire container */
+    grid-template-rows: auto auto 1fr;  /* Row for header, row for icons/labels, flexible row for content */
+    gap: 10px; /* Adds space between the rows */
+}
+
+.column-header-proportional {
+    grid-column: 1 / -1; /* Span across all columns in the grid */
+    font-family: "Reem Kufi Fun", sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    text-align: left; /* Align text to the left */
+    padding-left: 10px; /* Padding to align with the content below */
+}
+
+.icon-container {
+    display: flex; /* Makes sub-containers flexible */
+    flex-direction: column;
+    justify-content: top;
+    align-items: center;  /* Center items horizontally */
+}
+
+.icon-container img {
+    margin: 10px 0 25px 0;
+}
+
+.icon-container img:nth-child(2) {
+    margin: 0 0 25px 0; /* Slightly reduced margin for the second image */
+}
+
+.icon-container img:nth-child(3) {
+    margin: 0 0 10px 0; /* Reduced margin for the third image */
+}
+
+.icon-container img:nth-child(4) {
+    margin: 0 0 0 0; /* Reduced margin for the third image */
+}
+
+.label-container {
+    grid-row: 2; /* Place label container in the second row */
+    grid-column: 2; /* Place in the second column */
+    align-items: flex-start; /* Align items to the start (left) */
+    text-align: left; /* Align text to the left */
+    display: flex;
+    flex-direction: column;
+    justify-content: top; /* Align items to the top if necessary */
+}
+
+.legendLabel-proportional {
+    font-family: "Reem Kufi Fun", sans-serif;
+    font-size: 16px;
+    margin: 5px 0 20px 0;
+    text-align: left !important; /* Align text to the left */
+}
+
+.legendLabel-proportional:nth-child(2) {
+    margin: 0 0 30px 0; /* Slightly reduced margin for the second image */
+}
+
+.legendLabel-proportional:nth-child(3) {
+    margin: 0 0 28px 0; /* Reduced margin for the third image */
+}
+
+.legendLabel-proportional:nth-child(4) {
+    margin: 0 0 0 0; /* Reduced margin for the third image */
+}
+
+
+/* ================================================================================== */
+/* CHART  */
+/* ================================================================================== */
+
+#floating-chart {
+    position: absolute;
+    bottom: 100px; /* Adjust position as needed */
+    left: 20px;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.6); /* Optional for better contrast */
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.axis path,
+.axis line {
+    stroke: white; /* Change color of axes lines and ticks to white */
+}
+
+/* Style for axes text */
+.axis text {
+    fill: white; /* Change color of text to white */
+    font-family: "Reem Kufi Fun", sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.highlight {
+    stroke: rgb(243, 243, 236);
+    stroke-width: 2px;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.hidden {
+    display: none;
+}
+
+#chart-tooltip {
+  background-color: white;
+  padding: 5px;
+  border: 1px solid grey;
+  border-radius: 5px;
+  font-family: "Reem Kufi Fun", sans-serif;
+  font-size: 12px;
+  pointer-events: none;
+  z-index: 2000;
+}
+
+#chart-tooltip h4 {
+    margin: 0;
+    font-weight: bold;
+    text-align: center;
+    font-size: 16px;
+}
+
+.year-info-box {
+  position: absolute;
+  bottom: 100px;
+  left: 20px;
+  background: white;
+  color: black;
+  border: 2px solid black;
+  border-radius: 8px;
+  padding: 15px;
+  max-width: 300px;
+  z-index: 1000;
+  font-family: "Reem Kufi Fun", sans-serif;
+}
+
+
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    z-index: 1000; /* Ensure it's on top */
+  }
+
+
+.close-popup-button {
+    float: right;
+    cursor: pointer;
+}
