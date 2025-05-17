@@ -7,13 +7,10 @@ body,
 html {
     height: 100%;
     width: 100%;
-    /* Ensure the full height of the page is used */
     margin: 0;
-    /* Remove default margin */
     padding: 0;
-    /* Remove default padding */
     overflow: hidden;
-    /* Prevent scrolling on the body directly */
+
 }
 
 #map-container {
@@ -22,17 +19,17 @@ html {
 }
 
 #map-title {
-    justify-content: center; /* Center elements horizontally */
-    width: 100%; /* Make the container take full width of the page */
+    justify-content: center;
+    width: 100%;
     top: 0;
     left: 0;
     z-index: 1000;
     font-family: "Poppins", sans-serif;
     font-optical-sizing: auto;
     font-weight: regular;
-    font-size: 24px;
-    color: black;
-    display: inline-flex; /* Use inline-flex instead of flex */
+    font-size: 3em;
+    color: white;
+    display: inline-flex;
     align-items: center;
 }
 
@@ -623,12 +620,20 @@ svg:not(:root) {
 }
 
 #header-container {
-    display: flex;
-    align-items: center; /* Vertically center the contents */
+    display: block;
     position: absolute;
-    top: 20px; /* Adjust as needed */
+    top: 10px;
     left: 50%;
     transform: translateX(-50%);
+    z-index: 1000;
+}
+
+#subheader-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top: 40px;
+    left: 50%;
     z-index: 1000;
 }
 
@@ -636,12 +641,12 @@ svg:not(:root) {
     font-family: "Poppins", sans-serif;
     font-size: 1.5rem;
     color: white;
-    margin-right: 10px; /* Space between the text and the number */
+    margin-right: 10px;
 }
 
 #range-value {
     font-family: "Poppins", sans-serif;
-    font-size: 5rem; /* Larger and more pronounced */
+    font-size: 3rem;
     color: white;
 }
 
