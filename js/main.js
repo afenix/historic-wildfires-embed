@@ -9,7 +9,7 @@
 // Set the Global variables
 const mapParams = {
     'containerID': 'map-container',
-    'center':  [39, -100],
+    'center':  [39, -127],
     'zoom': 4
 }
 const dataDates = {
