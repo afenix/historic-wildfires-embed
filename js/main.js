@@ -782,7 +782,7 @@ const createChartData = (geojsonData) => {
 const createStackedBarChart = (data) => {
     // Setup the SVG and its dimensions
     const svg = d3.select('#wildfireChart');
-    const margin = { top: 20, right: 20, bottom: 30, left: 80 };
+    const margin = { top: 20, right: 20, bottom: 40, left: 80 };
     const width = +svg.attr('width') - margin.left - margin.right;
     const height = +svg.attr('height') - margin.top - margin.bottom;
     const d3Group = svg.append('g').attr('transform', `translate(${margin.left},${margin.top})`);
@@ -854,19 +854,24 @@ const createStackedBarChart = (data) => {
                 .tickFormat(d3.timeFormat("%Y"))
         )
         .append("text")
-        .text("Years")
-        .attr("text-anchor", "end")
-        .attr("dx", "-2em")
-        .attr("dy", "1.5em");
+        .attr("x", width / 2)
+        .attr("y", 40) // distance below the axis line
+        .attr("fill", "#fff") // optional, matches your chart style
+        .attr("text-anchor", "middle")
+        .text("Years");
 
     // Add the Y Axis
     d3Group.append("g")
         .attr("class", "axis axis--y")
-        .attr("transform", "translate(-5,0)")  // Move y-axis 10 pixels to the left
+        .attr("transform", "translate(-5,0)")
         .call(d3.axisLeft(y).ticks(5).tickFormat(d3.format(".2s")))
-        .append('text')
-        .text("Burned Acres")
-        .attr("text-anchor", "end");
+        .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", -70) // space from the axis line
+        .attr("x", -height / 2)
+        .attr("dy", "1em")
+        .attr("text-anchor", "middle")
+        .text("Acres Burned");
 };
 
 
