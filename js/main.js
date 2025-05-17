@@ -454,8 +454,8 @@ const setupSliderAndButtons = (years) => {
     playButton.onclick = startAnimation;
     pauseButton.onclick = stopAnimation;
 
-    // 👇 Optional: start animating immediately on load
-    startAnimation();
+    // Optional: start animating immediately on load
+    // startAnimation();
 };
 
 /**
