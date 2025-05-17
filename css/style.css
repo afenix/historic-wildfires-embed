@@ -27,7 +27,7 @@ html {
     top: 0;
     left: 0;
     z-index: 1000;
-    font-family: "Reem Kufi Fun", sans-serif;
+    font-family: "Poppins", sans-serif;
     font-optical-sizing: auto;
     font-weight: regular;
     font-size: 24px;
@@ -91,7 +91,7 @@ html {
 
 .leaflet-control-custom.home-button {
     margin-left: 11px !important;
-    font-family: "Reem Kufi Fun", sans-serif !important;
+    font-family: "Poppins", sans-serif !important;
 }
 
 .leaflet-control-custom.home-button:hover {
@@ -117,7 +117,7 @@ html {
 
 .leaflet-control-custom.zoom-user-button {
     margin-left: 11px !important;
-    font-family: "Reem Kufi Fun", sans-serif !important;
+    font-family: "Poppins", sans-serif !important;
 }
 
 .leaflet-control-custom.zoom-user-button:hover {
@@ -144,7 +144,7 @@ html {
 
 .leaflet-control-custom.region-button {
     margin-left: 11px !important;
-    font-family: "Reem Kufi Fun", sans-serif !important;
+    font-family: "Poppins", sans-serif !important;
 }
 
 .leaflet-control-custom.region-button:hover {
@@ -172,7 +172,7 @@ html {
  }
 
 .leaflet-tooltip {
-    font-family: "Reem Kufi Fun", sans-serif; /* Your desired font */
+    font-family: "Poppins", sans-serif; /* Your desired font */
     font-size: 14px; /* Adjust font size if needed */
     background-color: rgba(255, 255, 255, 0.9);  /* Semi-transparent background */
     border: 1px solid #333; /* Optional border */
@@ -215,7 +215,7 @@ html {
 #splash-welcome {
     color: #E85D04;
     font-size: 36px;
-    font-family: "Reem Kufi Fun", sans-serif; /
+    font-family: "Poppins", sans-serif; /
 }
 
 .splash-subtitle {
@@ -253,7 +253,7 @@ html {
 }
 
 .welcome-message h1 {
-    font-family: "Reem Kufi Fun", sans-serif;
+    font-family: "Poppins", sans-serif;
     font-optical-sizing: auto;
     font-weight: regular;
     font-size: 25px;
@@ -266,7 +266,7 @@ html {
     flex-direction: column;
     align-items: center;
     padding: 0 3em 0 3em;
-    font-family: "Reem Kufi Fun", sans-serif;
+    font-family: "Poppins", sans-serif;
     font-optical-sizing: auto;
     font-weight: regular;
     font-size: 16px;
@@ -279,7 +279,7 @@ html {
 #close-splash {
     display: block;
     margin: 0 auto;
-    font-family: "Reem Kufi Fun", sans-serif;
+    font-family: "Poppins", sans-serif;
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
@@ -327,7 +327,7 @@ html {
 #map-narrative {
     order: 1;
     max-height: 68%;
-    font-family: "Reem Kufi Fun", sans-serif;
+    font-family: "Poppins", sans-serif;
     font-optical-sizing: auto;
     font-weight: regular;
     font-size: 16px;
@@ -356,7 +356,7 @@ html {
     border-radius: 10%;
     cursor: pointer;
     z-index: 1000;
-    font-family: "Reem Kufi Fun", sans-serif;
+    font-family: "Poppins", sans-serif;
 }
 
 /* ================================================================================== */
@@ -537,7 +537,7 @@ svg:not(:root) {
     transition: opacity 500ms;
     overflow: auto;
     font-size: 14px;
-    font-family: "Reem Kufi Fun", sans-serif;
+    font-family: "Poppins", sans-serif;
 }
 
 .sidebar-content h2 {
@@ -554,7 +554,7 @@ svg:not(:root) {
     text-overflow: ellipsis;
     overflow: hidden;
     font-size: 18px;
-    font-family: "Reem Kufi Fun", sans-serif;
+    font-family: "Poppins", sans-serif;
 }
 
 .active-sidebar .sidebar-content {
@@ -581,7 +581,7 @@ svg:not(:root) {
     text-overflow: ellipsis;
     overflow: hidden;
     font-size: 18px;
-    font-family: "Reem Kufi Fun", sans-serif;
+    font-family: "Poppins", sans-serif;
 }
 
 
@@ -609,12 +609,12 @@ svg:not(:root) {
 
 .slider {
     position: absolute;
-    left: 50%;
+    left: 60%;
     bottom: 20px;
     transform: translateX(-50%);
     background: rgba(252, 252, 252, 0.2);
     box-shadow: 0px 15px 40px rgba(126, 109, 87, 0.4);
-    width: 25%;
+    width: 35%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -633,15 +633,15 @@ svg:not(:root) {
 }
 
 #header-text {
-    font-family: "Reem Kufi Fun", sans-serif;
+    font-family: "Poppins", sans-serif;
     font-size: 1.5rem;
     color: white;
     margin-right: 10px; /* Space between the text and the number */
 }
 
 #range-value {
-    font-family: "Reem Kufi Fun", sans-serif;
-    font-size: 3rem; /* Larger and more pronounced */
+    font-family: "Poppins", sans-serif;
+    font-size: 5rem; /* Larger and more pronounced */
     color: white;
 }
 
@@ -654,13 +654,13 @@ svg:not(:root) {
     padding: 10px 0;
     z-index: 500;
     font-size: 16px;
-    font-family: "Reem Kufi Fun", sans-serif;
+    font-family: "Poppins", sans-serif;
     color: black;
 }
 
 #total-count {
     font-size: 18px;
-    font-family: "Reem Kufi Fun", sans-serif;
+    font-family: "Poppins", sans-serif;
     font-weight: bold;
 }
 
@@ -745,7 +745,7 @@ svg:not(:root) {
 }
 
 .leaflet-popup-content {
-    font-family: "Reem Kufi Fun", sans-serif !important;
+    font-family: "Poppins", sans-serif !important;
     color: #333;
     font-size: 16px;
 }
@@ -774,14 +774,14 @@ svg:not(:root) {
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     z-index: 1000;
     position: absolute; /* Position it absolutely within its parent */
-    bottom: 50px; /* Distance from the bottom edge */
+    bottom: 20px; /* Distance from the bottom edge */
     right: 20px;  /* Distance from the right edge */
     display: none; /* Hidden by default */
 }
 
 .legend-toggle {
     position: absolute;
-    bottom: 50px; /* Align with the bottom of the legend */
+    bottom: 20px; /* Align with the bottom of the legend */
     right: 20px; /* Align with the left of the legend */
     z-index: 1001; /* Ensure it's above the legend */
 }
@@ -794,12 +794,12 @@ svg:not(:root) {
     color: white;
     border: none;
     border-radius: 5px;
-    font-family: "Reem Kufi Fun", sans-serif;
+    font-family: "Poppins", sans-serif;
     font-size: 12px;
 }
 
 #legend-title {
-    font-family: "Reem Kufi Fun", sans-serif;
+    font-family: "Poppins", sans-serif;
     font-size: 20px;
     text-align: center;
     margin-bottom: 10px; /* Adds space between the title and the next element */
@@ -824,7 +824,7 @@ svg:not(:root) {
 }
 
 .column-header-cloropleth {
-    font-family: "Reem Kufi Fun", sans-serif;
+    font-family: "Poppins", sans-serif;
     font-size: 18px;
     font-weight: bold;
     margin-bottom: 8px; /* Space below headers */
@@ -845,7 +845,7 @@ svg:not(:root) {
 }
 
 .legendValue-cloropleth {
-    font-family: "Reem Kufi Fun", sans-serif;
+    font-family: "Poppins", sans-serif;
     font-size: 16px;
     white-space: nowrap;
 }
@@ -860,7 +860,7 @@ svg:not(:root) {
 
 .column-header-proportional {
     grid-column: 1 / -1; /* Span across all columns in the grid */
-    font-family: "Reem Kufi Fun", sans-serif;
+    font-family: "Poppins", sans-serif;
     font-size: 18px;
     font-weight: bold;
     color: #333;
@@ -902,7 +902,7 @@ svg:not(:root) {
 }
 
 .legendLabel-proportional {
-    font-family: "Reem Kufi Fun", sans-serif;
+    font-family: "Poppins", sans-serif;
     font-size: 16px;
     margin: 5px 0 20px 0;
     text-align: left !important; /* Align text to the left */
@@ -944,7 +944,7 @@ svg:not(:root) {
 /* Style for axes text */
 .axis text {
     fill: white;
-    font-family: "Reem Kufi Fun", sans-serif;
+    font-family: "Poppins", sans-serif;
     font-size: 12px;
     font-weight: bold;
 }
@@ -964,7 +964,7 @@ svg:not(:root) {
   padding: 5px;
   border: 1px solid grey;
   border-radius: 5px;
-  font-family: "Reem Kufi Fun", sans-serif;
+  font-family: "Poppins", sans-serif;
   font-size: 12px;
   pointer-events: none;
   z-index: 2000;
