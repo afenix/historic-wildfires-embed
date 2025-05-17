@@ -42,44 +42,45 @@
                 <div id="cloropleth-container"></div>
                 <div id="proportional-container"></div>
             </div>
+        </div>
+        <div id="popup-content" style="display: none;"></div>
+        <div id="slider-container">
+            <div id="year-counter-container">
+                <div id="header-text">Year:</div>
+                <div id="range-value">2023</div> <!-- This is dynamically updated -->
             </div>
-            <div id="popup-content" style="display: none;"></div>
-            <div id="slider-container">
-                <div id="year-counter-container">
-                   <div id="header-text">Year:</div>
-                   <div id="range-value">2023</div> <!-- This is dynamically updated -->
-                </div>
-                <div id="slider" class="slider">
-                    <button class="button" id="play"><svg xmlns="http://www.w3.org/2000/svg" width="20"
-                            height="20" fill="white" viewBox="0 0 16 16">
-                            <path d="M4.5 3.5v9l7-4.5-7-4.5z" />
-                        </svg></button>
-                    <button class="button" id="pause"><svg xmlns="http://www.w3.org/2000/svg" width="20"
-                            height="20" fill="white" viewBox="0 0 16 16">
-                            <path d="M5.5 3.5h2v9h-2zm3 0h2v9h-2z" />
-                        </svg>
-                    </button>
+            <div id="slider" class="slider">
+                <button class="button" id="play"><svg xmlns="http://www.w3.org/2000/svg" width="20"
+                        height="20" fill="white" viewBox="0 0 16 16">
+                        <path d="M4.5 3.5v9l7-4.5-7-4.5z" />
+                    </svg></button>
 
-                    <button class="button" id="reverse">
 
-                        <!-- Left arrow SVG -->
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white"
-                            class="bi bi-chevron-left" viewBox="0 0 16 16">
-                            <path fill-rule="evenodd"
-                                d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0" />
-                        </svg>
-                    </button>
+                <button class="button" id="reverse">
+
+                    <!-- Left arrow SVG -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white"
+                        class="bi bi-chevron-left" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0" />
+                    </svg>
+                </button>
 
 
                 <input class='range' id="yearSlider" type='range' min="0" max="39" step="1">
 
                 <button class="button" id="forward">
-                <!-- Right arrow SVG -->
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white"
-                    class="bi bi-chevron-right" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd"
-                    d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708" />
-                </svg>
+                    <!-- Right arrow SVG -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white"
+                        class="bi bi-chevron-right" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                            d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708" />
+                    </svg>
+                </button>
+                <button class="button" id="pause"><svg xmlns="http://www.w3.org/2000/svg" width="20"
+                        height="20" fill="white" viewBox="0 0 16 16">
+                        <path d="M5.5 3.5h2v9h-2zm3 0h2v9h-2z" />
+                    </svg>
                 </button>
             </div>
         </div>
@@ -108,12 +109,7 @@
     </svg>
 
     <!-- APP DESCRIPTION/ATTRIBUTION  -->
-    <div id="mapGuidePopup" class="popup hidden">
-        <span class="close-popup-button" onclick="closePopup()">&times;</span>
-        <h3>Did you know?</h3>
-        <p>There's a Map Guide to help you explore the interactive map! Click here to learn more.</p>
-        <button onclick="openMapGuide()">Open Map Guide</button>
-    </div>
+
     <div class="sidebar" title="Map Guide">
         <button aria-label="close sidebar" type="button" class="close-button">
             <svg>
@@ -132,67 +128,28 @@
             <div class="item-content" id="menu">
                 <h1 class="main-title">How to Navigate Ignite Insights</h1>
                 <br class="content">
-                <p>Welcome! This interactive map tracks wildfires across the United States from 1984 to today. Witness how these dynamic natural phenomena have evolved over the last forty years and learn how we can adapt to live in harmony with them. Together, we can embrace the challenge of coexisting with wildfires and create a brighter future for ourselves and the planet.</p>
-                <h4>Here’s how to get the most out of Ignite Insights:</h4>
-                <li><strong>Exploring Wildfire History:</strong> Use the time slider below
-                    the map to adjust the years and observe changes directly. As you move through the years the "Summary of Current Fire Data" will be updated at the top of the side panel.</li>
-                </li>
-                <li><strong>Learn about specific fire events</strong> by clicking or hovering on individual fire map
-                    markers.
-                </li>
-                <li><strong>Understanding Fire Trends:</strong> Analyze overall fire patterns with the stacked bar chart. Each bar represents a year, and the colored segments show the distribution of wildfire types - such as prescribed burns, natural wildfires, and more.</li>
-                <li><strong>Navigation Controls:</strong> Explore various regions in the U.S. by using the multiple navigation controls on teh left of the map. Clicking on "+" or "-" will zoom in or out of the map. There are also custom regional zoom options for:</li>
-                    <ul>
-                        <li>
-                            Home: Zooms out to the full map view.
-                        </li>
-                        <li>
-                            Zoom to your location: Zooms in to your current location. Must allow the browser to allow this.
-                        </li>
-                        <li>
-                            US: Zooms in to the full United States view.
-                        </li>
-                        <li>
-                            PNW: Zooms in to the Pacific Northwest region.
-                        </li>
-                        <li>
-                            SW: Zooms in to the Southwest region.
-                        </li>
-                        <li>
-                            MW: Zooms in to the Midwest region.
-                        </li>
-                        <li>
-                            NE: Zooms in to the Northeast region.
-                        </li>
-                        <li>
-                            SE: Zooms in to the Southeast region.
-                        </li>
-                        <li>
-                            AK: Zooms in to Alaska.
-                        </li>
-                    </ul>
-                </ul>
-                <h4>Acknowledgements</h4>
-                <p>Building this site was a labor of love, made possible by the incredible contributions of others. Sites like this wouldn't exist without the countless hours of others building libraries, sharing knowledge, and providing data.  Special thanks go out to:</p>
-                <ul>
-                    <li><b>Leaflet, D3, Stadia Maps, and the MTBS program</b> for their invaluable mapping and data resources.</li>
-                    <li><b>UW Madison</b> for their ongoing support in my learning journey.</li>
-                    <li><b>My partner Megan Joanne Keller❤️</b> for her endless encouragement and support.</li>
 
+                <p>This interactive map and chart illustrate how wildfire activity has changed across the U.S.
+                    from 1984 to 2022. Use the controls below to explore patterns over time:</p>
+                <ul>
+                    <li><strong>Time Slider:</strong> Drag the slider or use the play/pause buttons to animate wildfire activity year by year.</li>
+                    </li>
+                    <li><strong>Map Markers:</strong>Hover over or click fire icons to view details about specific fire events.
+                    </li>
+                    <li><strong>Stacked Bar Chart:</strong> Shows the total area burned each year, categorized by fire type (e.g., prescribed, wildfire, unknown).</li>
+                    <li><strong>Zoom Controls:</strong> Use the + and – buttons to zoom, or select a region from the map controls to focus on specific areas of the country.</li>
                 </ul>
-                <h4>Attribution</h4
-                <ul></ul>
-                    <li>The historic wildfire data comes from  <a target="_blank"
-                        href="https://mtbs.gov/">MTBS (Monitoring Trends in Burn Severity) program</a>
+                <p>This tool is designed to support deeper understanding of fire trends across time and geography — and to inform more strategic decisions for resilience.</p>
+                <h4>Attribution & Data Sources</h4>
+                <ul>
+                    <li>Wildfire data comes from <a target="_blank"
+                            href="https://mtbs.gov/">MTBS (Monitoring Trends in Burn Severity)
+                            program</a>
                     </li>
-                    <li>Favicon by <a target="_blank"
-                            href="https://icons8.com/icon/UJcE6K1qaeAT/wildfire">Wildfire</a>,  icon by <a
-                            target="_blank" href="https://icons8.com">Icons8</a></p>
-                    </li>
+                    <li>Built by: Vibrant Planet Data Commons</li>
                 </ul>
             </div>
         </div>
-    </div>
     </div>
 
     <!--external script links -->
@@ -215,4 +172,5 @@
 <footer>
     <p>&copy; 2024 Alister A. Fenix </p>
 </footer>
+
 </html>
