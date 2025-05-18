@@ -19,7 +19,7 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v3
 
-      - name: Copy site content
+      - name: Copy site content to _site
         run: |
           mkdir _site
           cp index.html _site/
@@ -29,7 +29,7 @@ jobs:
           cp -r img _site/img
           cp -r lib _site/lib
 
-      - name: Upload artifact
+      - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v1
         with:
           path: _site
