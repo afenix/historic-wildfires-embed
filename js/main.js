@@ -412,7 +412,10 @@ const setupSliderAndButtons = (years) => {
         const percentage = (index / (years.length - 1)) * 100;
         slider.style.background = `linear-gradient(to right, red ${percentage}%, grey ${percentage}%)`;
         rangeValueDisplay.textContent = years[index];
-        filterMapByYear(years[index]); // <- your existing map update function
+
+        const selectedYear = years[index];
+        filterMapByYear(selectedYear); // update d3 chart when clicking the slider
+        highlightBarChartYear(selectedYear); // update d3 chart when auto-playing
     }
 
     // Move to a specific year
