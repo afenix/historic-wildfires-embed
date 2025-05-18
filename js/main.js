@@ -9,8 +9,8 @@
 // Set the Global variables
 const mapParams = {
     'containerID': 'map-container',
-    'center':  [39, -110],
-    'zoom': 4
+    'center':  [35.3, -105.5],
+    'zoom': 3
 }
 const dataDates = {
     'fire-history': {
@@ -134,13 +134,12 @@ const createMap = (containerId, center, zoom) => {
 
     // Define regions to create custom zoom control - include center coordinates and zoom levels
     const regions = {
-        'us': { tooltip: 'Zoom to Continental United States', center: [39.828, -98.5], zoom: 4 }, // Continental United States
-        'pnw': { tooltip: 'Zoom to Pacific Northwest', center: [39.9, -120.5], zoom: 5 }, // Pacific Northwest
-        'sw': { tooltip: 'Zoom to Southwest', center: [34.0, -112.0], zoom: 5 }, // Southwest
-        'mw': { tooltip: 'Zoom to Midwest', center: [41.0, -93.0], zoom: 5 }, // Midwest
-        'ne': { tooltip: 'Zoom to Northeast', center: [43.0, -73.0], zoom: 5 }, // Northeast
-        'se': { tooltip: 'Zoom to Southeast', center: [33.0, -85.0], zoom: 5 }, // Southeast
-        'ak': { tooltip: 'Zoom to Alaska', center: [60.67, -151.626], zoom: 4 } // Alaska
+        'US': { tooltip: 'Zoom to United States', center: [35.3, -105.5], zoom: 3 }, // United States
+        'W': { tooltip: 'Zoom to West', center: [39.9, -120.5], zoom: 5 }, // West
+        'MW': { tooltip: 'Zoom to Midwest', center: [37.9, -98.0], zoom: 5 }, // Midwest
+        'E': { tooltip: 'Zoom to Northeast', center: [36.9, -73.0], zoom: 5 }, // East
+        'AK': { tooltip: 'Zoom to Alaska', center: [63.67, -151.626], zoom: 4 }, // Alaska
+        'HI': { tooltip: 'Zoom to Hawaii', center: [20.7967, -156.3319], zoom: 6 } // Hawaii
     };
 
     // Create and add a custom zoom control for each region
