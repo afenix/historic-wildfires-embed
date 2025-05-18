@@ -23,7 +23,7 @@ const dataDates = {
     }
 }
 const geoJsonPaths = {
-    'mtbs-fires-pts': 'data/mtbs_firePts84_22.geojson',
+    'mtbs-fires-pts': 'data/mbts_firePts_4326_2024.geojson',
     'mtbs-fires-poly': 'data/mtbs_fire_poly.geojson'
 }
 let map;
@@ -842,8 +842,8 @@ const createStackedBarChart = (data) => {
             });
 
     // Add the X Axis
-    const tickYears = d3.range(1984, 2022, 10); // [1984, 1994, 2004, 2014, 2024]
-    tickYears.push(2022); // Add final year explicitly
+    const tickYears = d3.range(1984, 2024, 10); // [1984, 1994, 2004, 2014, 2024]
+    tickYears.push(2024); // Add final year explicitly
 
     d3Group.append("g")
         .attr("class", "axis axis--x")
