@@ -23,8 +23,8 @@ const dataDates = {
     }
 }
 const geoJsonPaths = {
-    'mtbs-fires-pts': 'assets/mbts_firePts_4326_2024.geojson',
-    'mtbs-fires-poly': 'assets/mtbs_fire_poly.geojson'
+    'mtbs-fires-pts': 'assets/data/mbts_firePts_4326_2024.geojson',
+    'mtbs-fires-poly': 'assets/data/mtbs_fire_poly.geojson'
 }
 let map;
 let currentYear = dataDates['fire-history'].startYear;
@@ -361,17 +361,17 @@ const createFirePopup = (feature) => {
 const getIconUrlForFireType = (fireType) => {
     switch (fireType) {
         case 'Wildfire':
-            return 'img/wildfire_igType2.svg';
+            return 'assets/img/wildfire_igType2.svg';
         case 'Prescribed':
-            return 'img/prescribed_igType2.svg';
+            return 'assets/img/prescribed_igType2.svg';
         case 'Unknown':
-            return 'img/unknown_igType2.svg';
+            return 'assets/img/unknown_igType2.svg';
         case 'Wildland Fire Use':
-            return 'img/beneficialFire_igType3.svg';
+            return 'assets/img/beneficialFire_igType3.svg';
         case 'Outline':
-            return 'img/fire_outline.svg';
+            return 'assets/img/fire_outline.svg';
         default:
-            return 'img/unknown_igType2.svg';
+            return 'assets/img/unknown_igType2.svg';
     }
 }
 
