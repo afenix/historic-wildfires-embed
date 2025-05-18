@@ -559,10 +559,10 @@ const createCloroplethLegend = () => {
     legendContainer.appendChild(header);  // Append the header to the container
 
     const classes = [
-        { label: 'Wildfire', iconUrl: 'img/wildfire_igType2.svg' },
-        { label: 'Prescribed Fire', iconUrl: 'img/prescribedFire_igType2.svg' },
-        { label: 'Wildland Fire Use', iconUrl: 'img/beneficialFire_igType3.svg' },
-        { label: 'Unknown', iconUrl: 'img/unknown_igType2.svg' },
+        { label: 'Wildfire', iconUrl: 'assets/img/wildfire_igType2.svg' },
+        { label: 'Prescribed Fire', iconUrl: 'assets/img/prescribedFire_igType2.svg' },
+        { label: 'Wildland Fire Use', iconUrl: 'assets/img/beneficialFire_igType3.svg' },
+        { label: 'Unknown', iconUrl: 'assets/img/unknown_igType2.svg' },
     ];
 
     classes.forEach(cls => {
