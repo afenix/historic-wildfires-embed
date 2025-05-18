@@ -23,7 +23,7 @@ const dataDates = {
     }
 }
 const geoJsonPaths = {
-    'mtbs-fires-pts': 'assets/data/mbts_firePts_4326_2024.geojson',
+    'mtbs-fires-pts': 'assets/data/mbts_firepts_4326_2024.geojson',
     'mtbs-fires-poly': 'assets/data/mtbs_fire_poly.geojson'
 }
 let map;
