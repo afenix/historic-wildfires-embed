@@ -23,8 +23,8 @@ const dataDates = {
     }
 }
 const geoJsonPaths = {
-    'mtbs-fires-pts': 'data/mbts_firePts_4326_2024.geojson',
-    'mtbs-fires-poly': 'data/mtbs_fire_poly.geojson'
+    'mtbs-fires-pts': 'assets/mbts_firePts_4326_2024.geojson',
+    'mtbs-fires-poly': 'assets/mtbs_fire_poly.geojson'
 }
 let map;
 let currentYear = dataDates['fire-history'].startYear;
