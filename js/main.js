@@ -135,9 +135,9 @@ const createMap = (containerId, center, zoom) => {
     // Define regions to create custom zoom control - include center coordinates and zoom levels
     const regions = {
         'US': { tooltip: 'Zoom to United States', center: [35.3, -105.5], zoom: 3 }, // United States
-        'W': { tooltip: 'Zoom to West', center: [39.9, -120.5], zoom: 5 }, // West
-        'MW': { tooltip: 'Zoom to Midwest', center: [37.9, -98.0], zoom: 5 }, // Midwest
-        'E': { tooltip: 'Zoom to Northeast', center: [36.9, -73.0], zoom: 5 }, // East
+        'W': { tooltip: 'Zoom to Western U.S.', center: [39.9, -120.5], zoom: 4 }, // West
+        'C': { tooltip: 'Zoom to Central U.S.', center: [37.9, -98.0], zoom: 4 }, // Midwest
+        'E': { tooltip: 'Zoom to Eastern U.S.', center: [36.9, -89.0], zoom: 4 }, // East
         'AK': { tooltip: 'Zoom to Alaska', center: [63.67, -151.626], zoom: 4 }, // Alaska
         'HI': { tooltip: 'Zoom to Hawaii', center: [20.7967, -156.3319], zoom: 6 } // Hawaii
     };
