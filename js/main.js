@@ -84,6 +84,14 @@ const createMap = (containerId, center, zoom) => {
         zoom: zoom, // Initial zoom level
     });
 
+    // Disable user interactions (but still allow programmatic zoom/pan)
+    map.dragging.disable();           // disable mouse drag
+    map.scrollWheelZoom.disable();   // disable scroll wheel zoom
+    map.doubleClickZoom.disable();   // disable double click zoom
+    map.boxZoom.disable();           // disable shift+drag zoom
+    map.keyboard.disable();          // disable keyboard controls
+    map.touchZoom.disable();         // disable touch zoom
+
     // Create a new control that adds the home button to the map
     L.Control.HomeButton = L.Control.extend({
         onAdd: function(map) {
@@ -265,6 +273,7 @@ const loadFireData  = async () => {
         const data = await response.json();
          // Extract unique years and initialize the slider
         const uniqueYears = extractUniqueYears(data.features);
+
         setupSliderAndButtons(uniqueYears);
 
         // Process data for chart ingestion and create the stacked bar chart
@@ -457,7 +466,7 @@ const setupSliderAndButtons = (years) => {
     pauseButton.onclick = stopAnimation;
 
     // Optional: start animating immediately on load
-    // startAnimation();
+    startAnimation();
 };
 
 /**
@@ -465,28 +474,33 @@ const setupSliderAndButtons = (years) => {
  * @param {string} year - The year to filter the data by.
  */
 const filterMapByYear = (year) => {
-    fetch(geoJsonPaths["mtbs-fires-pts"])
-        .then(response => response.json())
-        .then(data => {
-            const filteredData = {
-                type: 'FeatureCollection',
-                features: data.features.filter(feature => feature.properties.Ig_Date?.substring(0, 4) === year)
-            };
-            // Clear old data (if any)
-            if (window.geoJsonLayer) {
-                map.removeLayer(window.geoJsonLayer);
-            }
-            // Add new data to the map
-            addFireDataToMap(filteredData);
+  fetch(geoJsonPaths['mtbs-fires-pts'])
+  .then(response => response.json())
+  .then(data => {
+    const filteredData = {
+      type: 'FeatureCollection',
+      features: data.features.filter(
+        feature =>
+          feature.properties.Ig_Date?.substring(0, 4) === year &&
+          ['Wildfire', 'Unknown'].includes(feature.properties.Incid_Type)
+      )
+    }
+    // Clear old data (if any)
+    if (window.geoJsonLayer) {
+      map.removeLayer(window.geoJsonLayer)
+    }
+    // Add new data to the map
+    addFireDataToMap(filteredData)
 
-            // Calculate total acres burned for the year
-            let yearSumAcres = calculateTotalAcresByYear(filteredData);
-            // Update the map title with the total acres burned for the year
-            updateElementsOnPage(yearSumAcres, year);
-        })
-        .catch(error => {
-            console.error("Error filtering data:", error);
-        });
+    // Calculate total acres burned for the year
+    let yearSumAcres = calculateTotalAcresByYear(filteredData)
+    // Update the map title with the total acres burned for the year
+    updateElementsOnPage(yearSumAcres, year)
+  })
+  .catch(error => {
+    console.error('Error filtering data:', error)
+  })
+
 };
 
 
@@ -559,8 +573,6 @@ const createCloroplethLegend = () => {
 
     const classes = [
         { label: 'Wildfire', iconUrl: 'assets/img/wildfire_igType2.svg' },
-        { label: 'Prescribed Fire', iconUrl: 'assets/img/prescribedFire_igType2.svg' },
-        { label: 'Wildland Fire Use', iconUrl: 'assets/img/beneficialFire_igType3.svg' },
         { label: 'Unknown', iconUrl: 'assets/img/unknown_igType2.svg' },
     ];
 
@@ -593,26 +605,30 @@ const createCloroplethLegend = () => {
 const calculateTotalAcresByYear = (geojsonData) => {
     const summary = {};
 
-    geojsonData.features.forEach(feature => {
-        const year = feature.properties.Ig_Date.substring(0, 4);
-        const incType = feature.properties.Incid_Type; // 'Incid_Type' is the property for ignition type
-        const acres = feature.properties.BurnBndAc || 0;
+    geojsonData.features
+        .filter(feature => ['Wildfire', 'Unknown'].includes(feature.properties.Incid_Type)) // ← Filter here
+        .forEach(feature => {
+            const year = feature.properties.Ig_Date.substring(0, 4);
+            const incType = feature.properties.Incid_Type;
+            const acres = feature.properties.BurnBndAc || 0;
 
-        if (!summary[year]) {
-            summary[year] = {
-                totalAcres: 0 // Initialize total acres for all fire types
-            };
-        }
-        if (!summary[year][incType]) {
-            summary[year][incType] = 0;
-        }
+            if (!summary[year]) {
+                summary[year] = {
+                    totalAcres: 0
+                };
+            }
 
-        summary[year][incType] += acres;
-        summary[year].totalAcres += acres; // Increment total acres for the year
-    });
+            if (!summary[year][incType]) {
+                summary[year][incType] = 0;
+            }
+
+            summary[year][incType] += acres;
+            summary[year].totalAcres += acres; // now this reflects only wildfire + unknown
+        });
 
     return summary;
 };
+
 
 /**
  * Updates the map title with the given number of acres.
@@ -762,9 +778,7 @@ const createChartData = (geojsonData) => {
         year: new Date(year, 0, 1),
         totalAcres: wildfireData[year].totalAcres || 0,
         wildfire: wildfireData[year]['Wildfire'] || 0,
-        prescribed: wildfireData[year]['Prescribed Fire'] || 0,
-        unknown: wildfireData[year]['Unknown'] || 0,
-        wildlandFireUse: wildfireData[year]['Wildland Fire Use'] || 0,
+        unknown: wildfireData[year]['Unknown'] || 0
 
     }));
     return data;
@@ -799,12 +813,12 @@ const createStackedBarChart = (data) => {
         .domain([0, d3.max(data, d => d.totalAcres)]);
 
     const z = d3.scaleOrdinal()
-        .range(["#e78531", "#f7d664", "#abd037", "#d9dbdb"])
-        .domain(['wildfire', 'prescribed', 'wildlandFireUse', 'unknown']);
+        .range(["#e78531", "#d9dbdb"])
+        .domain(['wildfire', 'unknown']);
 
     // Setup the stack function
     const stack = d3.stack()
-        .keys(['wildfire', 'prescribed', 'wildlandFireUse', 'unknown']);
+        .keys(['wildfire', 'unknown']);
 
     // Generate layers
     const layers = stack(data);
@@ -833,8 +847,6 @@ const createStackedBarChart = (data) => {
                         <h4><strong>${d.data.year.getFullYear()}</strong></h4>
                         <p><strong>Total Acres:</strong> ${d.data.totalAcres.toLocaleString()}</p>
                         <p><strong>Wildfire:</strong> ${d.data.wildfire.toLocaleString()}</p>
-                        <p><strong>Prescribed:</strong> ${d.data.prescribed.toLocaleString()}</p>
-                        <p><strong>Wildland Fire Use:</strong> ${d.data.wildlandFireUse.toLocaleString()}</p>
                         <p><strong>Unknown:</strong> ${d.data.unknown.toLocaleString()}</p>
                     `);;
             })
