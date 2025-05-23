@@ -85,12 +85,12 @@ const createMap = (containerId, center, zoom) => {
     });
 
     // Disable user interactions (but still allow programmatic zoom/pan)
-    map.dragging.disable();           // disable mouse drag
+    //map.dragging.disable();           // disable mouse drag
     map.scrollWheelZoom.disable();   // disable scroll wheel zoom
-    map.doubleClickZoom.disable();   // disable double click zoom
-    map.boxZoom.disable();           // disable shift+drag zoom
-    map.keyboard.disable();          // disable keyboard controls
-    map.touchZoom.disable();         // disable touch zoom
+    //map.doubleClickZoom.disable();   // disable double click zoom
+    //map.boxZoom.disable();           // disable shift+drag zoom
+    //map.keyboard.disable();          // disable keyboard controls
+    //map.touchZoom.disable();         // disable touch zoom
 
     // Create a new control that adds the home button to the map
     L.Control.HomeButton = L.Control.extend({
@@ -304,20 +304,6 @@ const addFireDataToMap = (geojsonData) => {
     window.geoJsonLayer = L.geoJSON(geojsonData, {
         pointToLayer: createFireMarker,
         onEachFeature: (feature, layer) => {
-            // Bind hover events
-            layer.on('mouseover', () => {
-                const name = feature.properties.FireName || 'Not Available';
-                const acres = feature.properties.BurnBndAc.toLocaleString() || 'Not Available';
-                const fireType = feature.properties.Incid_Type || 'Not Available';
-                tooltip.setContent(`<h3>Name: ${name}</h3> Acres: ${acres}<br>Type: ${fireType}`)
-                       .setLatLng(layer.getLatLng()) // Use layer's latlng
-                       .addTo(map);
-            });
-
-            layer.on('mouseout', () => {
-                tooltip.remove();
-            });
-
             // Existing popup logic
             if (feature.properties) {
                 layer.bindPopup(createFirePopup(feature));
@@ -334,7 +320,12 @@ const addFireDataToMap = (geojsonData) => {
  */
 const createFireMarker = (feature, latlng) => {
     const fireType = feature.properties.Incid_Type;
-    const iconUrl = getIconUrlForFireType(fireType);
+    const isFeatureFire  = feature.properties.isFeatureFire  === 1;
+    // If it's a featured fire, use the featured icon
+    const iconUrl = isFeatureFire
+        ? 'assets/img/featuredFire.svg'
+        : getIconUrlForFireType(fireType === 'Unknown' ? 'Wildfire' : fireType); // Style "Unknown" like "Wildfire"
+
     const size = parseFloat(feature.properties.BurnBndAc);
     const iconSize = size > 0 ? calcPropRadius(size) : 0;
     if (iconSize === 0) return; // Skip rendering
@@ -342,7 +333,7 @@ const createFireMarker = (feature, latlng) => {
     const fireIcon = L.icon({
         iconUrl: iconUrl,
         iconSize: [iconSize, iconSize],
-        className: 'fire-icon'
+        className: isFeatureFire  ? 'fire-icon feature-fire' : 'fire-icon'
     });
 
     return L.marker(latlng, { icon: fireIcon });
@@ -354,14 +345,46 @@ const createFireMarker = (feature, latlng) => {
  * @returns {string} The HTML string representing the fire popup.
  */
 const createFirePopup = (feature) => {
-    const dateString = feature.properties.Ig_Date;
-    const date = new Date(dateString);
-    const formattedDate = date.toLocaleDateString("en-US");
+    const props = feature.properties;
+    const isFeatured = props.isFeatureFire === 1;
 
-    return `<h3>Fire Name: ${feature.properties.FireName || 'No Name'}</h3>
-            <p>Ignition Date: ${formattedDate}</p>
-            <p>Acres Burned: ${feature.properties.BurnBndAc?.toLocaleString()}</p>
-            <p>Type of Fire: ${feature.properties.Incid_Type}</p>`;
+    const name = props.FireName || 'Not Available';
+    const date = props.Ig_Date ? new Date(props.Ig_Date).toLocaleDateString("en-US") : 'Unknown';
+    const acres = props.BurnBndAc ? props.BurnBndAc.toLocaleString() : 'Not Available';
+
+    let html = `<div class="map-popup">`;
+
+    // Show the featured badge first, if applicable
+    if (isFeatured) {
+        html += `<h3 class="signal-fire-label"><strong>🔥 Featured Fire</strong></h3>`;
+    }
+
+     // Basic fire info (always shown)
+    html += `
+        <h3 class="chart-tooltip">${name}</h3>
+        <p><strong>Ignition Date:</strong> ${date}</p>
+        <p><strong>Acres Burned:</strong> ${acres}</p>
+    `;
+
+   // Additional fields only for featured fires
+    if (isFeatured) {
+        const cause = props.Cause || 'Unknown';
+        const cost = props.Cost ? `$${Number(props.Cost).toLocaleString()}` : 'Not Reported';
+        const livesLost = props.LivesLost ?? 'Not Reported';
+        const structuresLost = props.StrucLost ?? 'Not Reported';
+
+        html += `
+            <p><strong>Cause:</strong> ${cause}</p>
+            <p><strong>Estimated Cost:</strong> ${cost}</p>
+            <p><strong>Lives Lost:</strong> ${livesLost}</p>
+            <p><strong>Structures Lost:</strong> ${structuresLost}</p>
+            <p class="signal-fire-description">
+                This fire was selected to illustrate significant trends in wildfire behavior, community impact, or response.
+            </p>
+        `;
+    }
+
+    return html;
 }
 
 /**
@@ -572,12 +595,12 @@ const createCloroplethLegend = () => {
     // Create and append the header for the Cloropleth Legend
     const header = document.createElement('div');
     header.className = 'column-header-cloropleth';
-    header.textContent = 'Ignition Types:';
+    header.textContent = 'Types of Fire in This Map:';
     legendContainer.appendChild(header);  // Append the header to the container
 
     const classes = [
-        { label: 'Wildfire', iconUrl: 'assets/img/wildfire_igType2.svg' },
-        { label: 'Unknown', iconUrl: 'assets/img/unknown_igType2.svg' },
+        { label: 'Wildfires (1984–2025)', iconUrl: 'assets/img/wildfire_igType2.svg' },
+        { label: 'Featured Fires', iconUrl: 'assets/img/historicFire_igType.svg' } // Optional
     ];
 
     classes.forEach(cls => {
@@ -610,7 +633,7 @@ const calculateTotalAcresByYear = (geojsonData) => {
     const summary = {};
 
     geojsonData.features
-        .filter(feature => ['Wildfire', 'Unknown'].includes(feature.properties.Incid_Type)) // ← Filter here
+        .filter(feature => ['Wildfire', 'Unknown'].includes(feature.properties.Incid_Type))
         .forEach(feature => {
             const year = feature.properties.Ig_Date.substring(0, 4);
             const incType = feature.properties.Incid_Type;
@@ -628,7 +651,7 @@ const calculateTotalAcresByYear = (geojsonData) => {
             }
 
             summary[year][incType] += acres;
-            summary[year].totalAcres += acres; // now this reflects only wildfire + unknown
+            summary[year].totalAcres += acres;
         });
 
     return summary;
@@ -782,9 +805,7 @@ const createChartData = (geojsonData) => {
     const data = Object.keys(wildfireData).map(year => ({
         year: new Date(year, 0, 1),
         totalAcres: wildfireData[year].totalAcres || 0,
-        wildfire: wildfireData[year]['Wildfire'] || 0,
-        unknown: wildfireData[year]['Unknown'] || 0
-
+        wildfire: (wildfireData[year]['Wildfire'] || 0) + (wildfireData[year]['Unknown'] || 0)
     }));
     return data;
 };
@@ -819,11 +840,11 @@ const createStackedBarChart = (data) => {
 
     const z = d3.scaleOrdinal()
         .range(["#e78531", "#d9dbdb"])
-        .domain(['wildfire', 'unknown']);
+        .domain(['wildfire']);
 
     // Setup the stack function
     const stack = d3.stack()
-        .keys(['wildfire', 'unknown']);
+        .keys(['wildfire']);
 
     // Generate layers
     const layers = stack(data);
@@ -849,10 +870,10 @@ const createStackedBarChart = (data) => {
                     .style('top', (event.pageY - 20) + "px")
                     .classed('hidden', false)
                     .html(`
-                        <h4><strong>${d.data.year.getFullYear()}</strong></h4>
-                        <p><strong>Total Acres:</strong> ${d.data.totalAcres.toLocaleString()}</p>
-                        <p><strong>Wildfire:</strong> ${d.data.wildfire.toLocaleString()}</p>
-                        <p><strong>Unknown:</strong> ${d.data.unknown.toLocaleString()}</p>
+                        <div>
+                            <h3><strong>${d.data.year.getFullYear()}</strong></h3>
+                            <p><strong>Total Acres:</strong> ${d.data.totalAcres.toLocaleString()}</p>
+                        </div>
                     `);;
             })
             .on('mouseout', function() {
