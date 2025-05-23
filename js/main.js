@@ -319,16 +319,24 @@ const addFireDataToMap = (geojsonData) => {
  * @returns {L.Marker} - The fire marker.
  */
 const createFireMarker = (feature, latlng) => {
-    const fireType = feature.properties.Incid_Type;
-    const isFeatureFire  = feature.properties.isFeatureFire  === 1;
+    const props = feature.properties;
+    const fireType = props.Incid_Type;
+    const isFeatureFire  = props.isFeatureFire  === 1;
+    const acres = parseFloat(props.BurnBndAc);
+
+    // Only render if:
+    // 1. It's a featured fire (always include)
+    // 2. OR it has 1 or more acres
+    if (!isFeatureFire && (!acres || acres < 1)) return;
+
     // If it's a featured fire, use the featured icon
     const iconUrl = isFeatureFire
         ? 'assets/img/featuredFire.svg'
-        : getIconUrlForFireType(fireType === 'Unknown' ? 'Wildfire' : fireType); // Style "Unknown" like "Wildfire"
+        : getIconUrlForFireType(fireType === 'Unknown' ? 'Wildfire' : fireType);
 
-    const size = parseFloat(feature.properties.BurnBndAc);
-    const iconSize = size > 0 ? calcPropRadius(size) : 0;
-    if (iconSize === 0) return; // Skip rendering
+    const iconSize = isFeatureFire
+        ? BASE_FIRE_SIZE * 1.4
+        : calcPropRadius(acres);
 
     const fireIcon = L.icon({
         iconUrl: iconUrl,
@@ -600,7 +608,7 @@ const createCloroplethLegend = () => {
 
     const classes = [
         { label: 'Wildfires (1984–2025)', iconUrl: 'assets/img/wildfire_igType2.svg' },
-        { label: 'Featured Fires', iconUrl: 'assets/img/historicFire_igType.svg' } // Optional
+        { label: 'Featured Fires', iconUrl: 'assets/img/featuredFire.svg' } // Optional
     ];
 
     classes.forEach(cls => {
