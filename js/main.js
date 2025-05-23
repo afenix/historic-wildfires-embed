@@ -334,9 +334,7 @@ const createFireMarker = (feature, latlng) => {
         ? 'assets/img/featuredFire.svg'
         : getIconUrlForFireType(fireType === 'Unknown' ? 'Wildfire' : fireType);
 
-    const iconSize = isFeatureFire
-        ? BASE_FIRE_SIZE * 1.4
-        : calcPropRadius(acres);
+    const iconSize = calcPropRadius(acres);
 
     const fireIcon = L.icon({
         iconUrl: iconUrl,
