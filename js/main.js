@@ -23,7 +23,7 @@ const dataDates = {
     }
 }
 const geoJsonPaths = {
-    'mtbs-fires-pts': 'assets/data/mbts_firepts_4326_2024.geojson',
+    'mtbs-fires-pts': 'assets/data/MTBS_WFIGS_Combined_Fires_1984_2025.geojson',
     'mtbs-fires-poly': 'assets/data/mtbs_fire_poly.geojson'
 }
 let map;
@@ -37,7 +37,7 @@ const LARGE_FIRE_MAX_ACREAGE = 50000;   // up to 50,000 acres
 // Any fire above 50,000 acres is considered a mega fire
 
 // Define fixed sizes for the icons based on proportions
-const BASE_FIRE_SIZE = 16; // Small fire as the visual reference
+const BASE_FIRE_SIZE = 12; // Small fire as the visual reference
 const MEDIUM_FIRE_SIZE = BASE_FIRE_SIZE * 1.4;  // 40% increase
 const LARGE_FIRE_SIZE = BASE_FIRE_SIZE * 2.2;  // 80% increase
 const MEGA_FIRE_SIZE = BASE_FIRE_SIZE * 3.4;  // 120% increase
@@ -264,13 +264,15 @@ const extractUniqueYears = (features) => {
 };
 
 /**
- * Loads fire data from a specified geoJsonPath and performs kicks off the process to filter and display the data.
+ * Loads fire data from a specified geoJsonPath and kicks off the process to filter and display the data.
  * @returns {Promise<void>} A promise that resolves when the fire data is loaded and processed.
  */
 const loadFireData  = async () => {
     try {
         const response = await fetch(geoJsonPaths["mtbs-fires-pts"]);
         const data = await response.json();
+console.log('data', data);
+
          // Extract unique years and initialize the slider
         const uniqueYears = extractUniqueYears(data.features);
 
@@ -304,7 +306,7 @@ const addFireDataToMap = (geojsonData) => {
         onEachFeature: (feature, layer) => {
             // Bind hover events
             layer.on('mouseover', () => {
-                const name = feature.properties.Incid_Name || 'Not Available';
+                const name = feature.properties.FireName || 'Not Available';
                 const acres = feature.properties.BurnBndAc.toLocaleString() || 'Not Available';
                 const fireType = feature.properties.Incid_Type || 'Not Available';
                 tooltip.setContent(`<h3>Name: ${name}</h3> Acres: ${acres}<br>Type: ${fireType}`)
@@ -333,7 +335,9 @@ const addFireDataToMap = (geojsonData) => {
 const createFireMarker = (feature, latlng) => {
     const fireType = feature.properties.Incid_Type;
     const iconUrl = getIconUrlForFireType(fireType);
-    const iconSize = calcPropRadius(feature.properties.BurnBndAc);
+    const size = parseFloat(feature.properties.BurnBndAc);
+    const iconSize = size > 0 ? calcPropRadius(size) : 0;
+    if (iconSize === 0) return; // Skip rendering
 
     const fireIcon = L.icon({
         iconUrl: iconUrl,
@@ -354,7 +358,7 @@ const createFirePopup = (feature) => {
     const date = new Date(dateString);
     const formattedDate = date.toLocaleDateString("en-US");
 
-    return `<h3>Fire Name: ${feature.properties.Incid_Name || 'No Name'}</h3>
+    return `<h3>Fire Name: ${feature.properties.FireName || 'No Name'}</h3>
             <p>Ignition Date: ${formattedDate}</p>
             <p>Acres Burned: ${feature.properties.BurnBndAc?.toLocaleString()}</p>
             <p>Type of Fire: ${feature.properties.Incid_Type}</p>`;
@@ -495,7 +499,7 @@ const filterMapByYear = (year) => {
     // Calculate total acres burned for the year
     let yearSumAcres = calculateTotalAcresByYear(filteredData)
     // Update the map title with the total acres burned for the year
-    updateElementsOnPage(yearSumAcres, year)
+    //updateElementsOnPage(yearSumAcres, year)
   })
   .catch(error => {
     console.error('Error filtering data:', error)
@@ -529,7 +533,7 @@ const createProportionalLegend = () => {
 
     // Define the categories and their labels and sizes
     const categories = [
-        { label: 'Small: 500-2,5k', size: BASE_FIRE_SIZE },
+        { label: 'Small: -2,5k', size: BASE_FIRE_SIZE },
         { label: 'Medium: 2.5k-10k', size: MEDIUM_FIRE_SIZE },
         { label: 'Large: 10k-50k', size: LARGE_FIRE_SIZE },
         { label: 'Mega: 50k+', size: MEGA_FIRE_SIZE }
@@ -610,7 +614,8 @@ const calculateTotalAcresByYear = (geojsonData) => {
         .forEach(feature => {
             const year = feature.properties.Ig_Date.substring(0, 4);
             const incType = feature.properties.Incid_Type;
-            const acres = feature.properties.BurnBndAc || 0;
+            const acres = feature.properties.BurnBndAc;
+            if (!acres || acres <= 0) return;
 
             if (!summary[year]) {
                 summary[year] = {
@@ -647,7 +652,7 @@ const updateElementsOnPage = (yearData, year) => {
     const prescribedFireAcres = yearData[year]["Prescribed Fire"] || 0;  // Use a default of 0 if no data
     const unknownAcres = yearData[year]['Unknown'] || 0;
     const wildfireAcres = yearData[year]['Wildfire'] || 0;
-    const wildLandFireUseAcres = yearData[year]["Wildland Fire Use"] || 0;
+
 
     // Update the DOM elements with the new values
     const fireYearElements = document.getElementsByClassName('fire-year');
