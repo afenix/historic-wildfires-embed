@@ -257,7 +257,9 @@ const extractUniqueYears = (features) => {
         const igDate = feature.properties.Ig_Date;
         if (igDate) {
             const year = igDate.substring(0, 4);
-            years.add(year);
+            if (parseInt(year) >= 1994) { // ✅ Filter starts here
+                years.add(year);
+            }
         }
     });
     return Array.from(years).sort();
@@ -271,7 +273,6 @@ const loadFireData  = async () => {
     try {
         const response = await fetch(geoJsonPaths["mtbs-fires-pts"]);
         const data = await response.json();
-console.log('data', data);
 
          // Extract unique years and initialize the slider
         const uniqueYears = extractUniqueYears(data.features);
@@ -808,11 +809,13 @@ const closeSidebar = () => {
 
 const createChartData = (geojsonData) => {
     const wildfireData = calculateTotalAcresByYear(geojsonData);
-    const data = Object.keys(wildfireData).map(year => ({
-        year: new Date(year, 0, 1),
-        totalAcres: wildfireData[year].totalAcres || 0,
-        wildfire: (wildfireData[year]['Wildfire'] || 0) + (wildfireData[year]['Unknown'] || 0)
-    }));
+    const data = Object.keys(wildfireData)
+        .filter(year => parseInt(year) >= 1994) // Filter to include only years from 1994 onwards
+        .map(year => ({
+            year: new Date(year, 0, 1),
+            totalAcres: wildfireData[year].totalAcres || 0,
+            wildfire: (wildfireData[year]['Wildfire'] || 0) + (wildfireData[year]['Unknown'] || 0)
+        }));
     return data;
 };
 
@@ -888,7 +891,7 @@ const createStackedBarChart = (data) => {
             });
 
     // Add the X Axis
-    const tickYears = d3.range(1984, 2024, 10); // [1984, 1994, 2004, 2014, 2024]
+    const tickYears = d3.range(1994, 2024, 10); // [1984, 1994, 2004, 2014, 2024]
     tickYears.push(2024); // Add final year explicitly
 
     d3Group.append("g")
@@ -918,6 +921,42 @@ const createStackedBarChart = (data) => {
         .attr("dy", "1em")
         .attr("text-anchor", "middle")
         .text("Acres Burned");
+
+    // ---------------------------------------------
+    // Add Linear Regression Trend Line
+    // ---------------------------------------------
+    const regressionLine = (() => {
+        const fireCounts = data.map(d => [d.year.getFullYear(), d.totalAcres]);
+        const n = fireCounts.length;
+        const sumX = d3.sum(fireCounts, d => d[0]);
+        const sumY = d3.sum(fireCounts, d => d[1]);
+        const sumXY = d3.sum(fireCounts, d => d[0] * d[1]);
+        const sumX2 = d3.sum(fireCounts, d => d[0] * d[0]);
+        const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+        const intercept = (sumY - slope * sumX) / n;
+        return fireCounts.map(([x]) => [new Date(x, 0, 1), slope * x + intercept]);
+    })();
+
+    const trendLine = d3.line()
+        .x(d => x(d[0]) + (width / data.length) / 2)
+        .y(d => y(d[1]));
+
+
+    d3Group.append("path")
+        .datum(regressionLine)
+        .attr("class", "trend-line")
+        .attr("fill", "none")
+        .attr("stroke", "#ffffff")
+        .attr("stroke-width", 2)
+        .attr("d", trendLine);
+
+    d3Group.append("text")
+        .attr("x", width - 100)
+        .attr("y", y(regressionLine[regressionLine.length - 1][1]) - 10)
+        .attr("text-anchor", "end")
+        .style("fill", "#ffffff")
+        .style("font-size", "12px")
+        .text("Trend Line");
 };
 
 
