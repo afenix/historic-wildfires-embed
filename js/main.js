@@ -12,6 +12,33 @@ const mapParams = {
     'center':  [35.3, -105.5],
     'zoom': 3
 }
+// Define regions to create custom zoom control - include center coordinates and zoom levels
+const regions = {
+    'USA': {
+        tooltip: 'Zoom to Entire U.S.',
+        center: [39.3, -98.5],
+        zoom: 3,
+        bounds: L.latLngBounds([17.5, -179], [72, -65])
+    },
+    'CONUS': {
+        tooltip: 'Zoom to Continental U.S.',
+        center: [37.5, -96.5],
+        zoom: 4,
+        bounds: L.latLngBounds([24.396308, -125.0], [49.384358, -66.93457])
+    },
+    'AK': {
+        tooltip: 'Zoom to Alaska',
+        center: [63.67, -151.626],
+        zoom: 4,
+        bounds: L.latLngBounds([51.2, -179], [71.5, -129])
+    },
+    'HI': {
+        tooltip: 'Zoom to Hawai‘i',
+        center: [20.7967, -156.3319],
+        zoom: 6,
+        bounds: L.latLngBounds([18.5, -161], [21.9, -154])
+    }
+};
 const dataDates = {
     'fire-history': {
         startYear: 1984,
@@ -29,6 +56,7 @@ const geoJsonPaths = {
 let map;
 let currentYear = dataDates['fire-history'].startYear;
 let geoJson;
+let suppressBoundsCheck = false; // Flag to suppress bounds check on initial zoom
 
 // Define thresholds for fire sizes
 const SMALL_FIRE_MAX_ACREAGE = 2500;    // up to 2,500 acres
@@ -78,15 +106,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
 // Function to instantiate the Leaflet map and custom controls
 const createMap = (containerId, center, zoom) => {
+
+
     // Create the map and set its initial view to the specified coordinates and zoom level
     map = L.map(containerId, {
-        center: center, // USA
-        zoom: zoom, // Initial zoom level
+        center: center,
+        zoom: zoom,
+        minZoom: 3,
+        maxZoom: 10,
+        maxBounds: regions['CONUS'], // Start with CONUS
+        maxBoundsViscosity: 0.7 // “resistance” near boundary edge
     });
 
     // Disable user interactions (but still allow programmatic zoom/pan)
-    //map.dragging.disable();           // disable mouse drag
     map.scrollWheelZoom.disable();   // disable scroll wheel zoom
+    //map.dragging.disable();           // disable mouse drag
     //map.doubleClickZoom.disable();   // disable double click zoom
     //map.boxZoom.disable();           // disable shift+drag zoom
     //map.keyboard.disable();          // disable keyboard controls
@@ -108,7 +142,14 @@ const createMap = (containerId, center, zoom) => {
 
             // Attach the event listener to the container
             container.onclick = function() {
-                map.setView(mapParams.center, mapParams.zoom); // Set this to the center and zoom level of the United States, including Alaska
+                suppressBoundsCheck = true;
+                 // Update maxBounds based on selected region
+                const region = regions['USA'];
+                if (region.bounds) {
+                    map.setMaxBounds(region.bounds);
+                }
+                // Zoom to center/zoom
+                map.setView(region.center, region.zoom);
             }
             return container;
         }
@@ -140,16 +181,6 @@ const createMap = (containerId, center, zoom) => {
     // Add the new home control to the map
     map.addControl(new L.Control.UserLocation({ position: 'topleft' }));
 
-    // Define regions to create custom zoom control - include center coordinates and zoom levels
-    const regions = {
-        'US': { tooltip: 'Zoom to United States', center: [35.3, -105.5], zoom: 3 }, // United States
-        'W': { tooltip: 'Zoom to Western U.S.', center: [39.9, -120.5], zoom: 4 }, // West
-        'C': { tooltip: 'Zoom to Central U.S.', center: [37.9, -98.0], zoom: 4 }, // Midwest
-        'E': { tooltip: 'Zoom to Eastern U.S.', center: [36.9, -89.0], zoom: 4 }, // East
-        'AK': { tooltip: 'Zoom to Alaska', center: [63.67, -151.626], zoom: 4 }, // Alaska
-        'HI': { tooltip: 'Zoom to Hawaii', center: [20.7967, -156.3319], zoom: 6 } // Hawaii
-    };
-
     // Create and add a custom zoom control for each region
     Object.keys(regions).forEach(function(regionKey) {
         var region = regions[regionKey];
@@ -164,8 +195,8 @@ const createMap = (containerId, center, zoom) => {
 
                 // Style region buttons
                 container.style.backgroundColor = 'white';
-                container.style.width = '35px';
-                container.style.height = '30px';
+                container.style.width = '40px';
+                container.style.height = '35px';
                 container.style.display = 'flex';
                 container.style.justifyContent = 'center';
                 container.style.alignItems = 'center';
@@ -173,6 +204,12 @@ const createMap = (containerId, center, zoom) => {
 
                 // Attach the event listener
                 container.onclick = function() {
+                    suppressBoundsCheck = true;
+                    // Update maxBounds based on selected region
+                   if (region.bounds) {
+                        map.setMaxBounds(region.bounds);
+                    }
+
                     map.setView(region.center, region.zoom);
                 }
 
@@ -194,6 +231,17 @@ const createMap = (containerId, center, zoom) => {
     // Add a scale bar to the map
     L.control.scale({ position: 'bottomleft', metric: false }).addTo(map);
 
+    map.on('moveend', () => {
+        if (suppressBoundsCheck) {
+            suppressBoundsCheck = false;
+            return;
+        }
+        const bounds = map.options.maxBounds;
+        if (bounds && !bounds.contains(map.getCenter())) {
+            map.panInsideBounds(bounds, { animate: true });
+        }
+    });
+
     // Initiate the retrieval and display of wildfire points
     loadFireData ();
     createCloroplethLegend();
@@ -214,7 +262,6 @@ const toggleSidePanelAndAdjustMap = (event) => {
 
     // Change the text content of the toggle button based on the current state of the side panel
     if (sidePanel.classList.contains('closed')) {
-        console.log('i should be switching to open now');
         event.target.textContent = 'Open';
     } else {
         event.target.textContent = 'Close';
@@ -257,7 +304,7 @@ const extractUniqueYears = (features) => {
         const igDate = feature.properties.Ig_Date;
         if (igDate) {
             const year = igDate.substring(0, 4);
-            if (parseInt(year) >= 1994) { // ✅ Filter starts here
+            if (parseInt(year) >= 1990) { // ✅ Filter starts here
                 years.add(year);
             }
         }
@@ -810,7 +857,7 @@ const closeSidebar = () => {
 const createChartData = (geojsonData) => {
     const wildfireData = calculateTotalAcresByYear(geojsonData);
     const data = Object.keys(wildfireData)
-        .filter(year => parseInt(year) >= 1994) // Filter to include only years from 1994 onwards
+        .filter(year => parseInt(year) >= 1990) // Filter to include only years from 1990 onwards
         .map(year => ({
             year: new Date(year, 0, 1),
             totalAcres: wildfireData[year].totalAcres || 0,
@@ -891,8 +938,8 @@ const createStackedBarChart = (data) => {
             });
 
     // Add the X Axis
-    const tickYears = d3.range(1994, 2024, 10); // [1984, 1994, 2004, 2014, 2024]
-    tickYears.push(2024); // Add final year explicitly
+    const tickYears = d3.range(1990, 2024, 10); // [1984, 1994, 2004, 2014, 2024]
+    tickYears.push(2025); // Add final year explicitly
 
     d3Group.append("g")
         .attr("class", "axis axis--x")
