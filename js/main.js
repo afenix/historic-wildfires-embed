@@ -581,7 +581,7 @@ const filterMapByYear = (year) => {
             const isRelevantType = ['Wildfire', 'Unknown'].includes(incType);
             const isTargetYear = fireYear === year;
 
-            return isRelevantType && isTargetYear && acres > 500;
+            return isRelevantType && isTargetYear && acres >= 500;
         })
     };
     // Clear old data (if any)
@@ -705,22 +705,24 @@ const calculateTotalAcresByYear = (geojsonData) => {
     const summary = {};
 
     geojsonData.features
-        .filter(feature => ['Wildfire', 'Unknown'].includes(feature.properties.Incid_Type))
+        .filter(feature => {
+            const props = feature.properties;
+            const incType = props.Incid_Type;
+            const acres = parseFloat(props.BurnBndAc || 0);
+            const isFeature = props.isFeatureFire === 1;
+
+            // Include only:
+            // 1. Wildfire/Unknown types
+            // 2. Acres >= 500 or is a featured fire
+            return ['Wildfire', 'Unknown'].includes(incType) && (acres >= 500 || isFeature);
+        })
         .forEach(feature => {
             const year = feature.properties.Ig_Date.substring(0, 4);
             const incType = feature.properties.Incid_Type;
-            const acres = feature.properties.BurnBndAc;
-            if (!acres || acres <= 0) return;
+            const acres = parseFloat(feature.properties.BurnBndAc || 0);
 
-            if (!summary[year]) {
-                summary[year] = {
-                    totalAcres: 0
-                };
-            }
-
-            if (!summary[year][incType]) {
-                summary[year][incType] = 0;
-            }
+            if (!summary[year]) summary[year] = { totalAcres: 0 };
+            if (!summary[year][incType]) summary[year][incType] = 0;
 
             summary[year][incType] += acres;
             summary[year].totalAcres += acres;
