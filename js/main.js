@@ -53,6 +53,7 @@ const geoJsonPaths = {
     'mtbs-fires-pts': 'assets/data/MTBS_WFIGS_Combined_Fires_1984_2025.geojson',
     'mtbs-fires-poly': 'assets/data/mtbs_fire_poly.geojson'
 }
+let featuredFireMarkers = [];
 let map;
 let currentYear = dataDates['fire-history'].startYear;
 let geoJson;
@@ -346,13 +347,10 @@ const addFireDataToMap = (geojsonData) => {
     if (window.geoJsonLayer) {
         map.removeLayer(window.geoJsonLayer);
     }
-    // create the tooltip on hover events
-    const tooltip = L.tooltip({ sticky: true });
 
     window.geoJsonLayer = L.geoJSON(geojsonData, {
         pointToLayer: createFireMarker,
         onEachFeature: (feature, layer) => {
-            // Existing popup logic
             if (feature.properties) {
                 layer.bindPopup(createFirePopup(feature));
             }
@@ -390,7 +388,28 @@ const createFireMarker = (feature, latlng) => {
         className: isFeatureFire  ? 'fire-icon feature-fire' : 'fire-icon'
     });
 
-    return L.marker(latlng, { icon: fireIcon });
+    const marker = L.marker(latlng, { icon: fireIcon });
+
+        // Add tooltip only for featured fires
+    if (isFeatureFire) {
+        marker.bindTooltip("🔥 Featured Fire", {
+            permanent: true,
+            direction: 'top',
+            className: 'featured-fire-tooltip'
+        }).openTooltip(); // Ensure it shows immediately
+
+        // Add marker to global list
+        featuredFireMarkers.push(marker);
+
+        // Remove tooltip on click (when popup is triggered)
+        marker.on('click', function () {
+            featuredFireMarkers.forEach(m => m.unbindTooltip());
+            featuredFireMarkers = []; // clear list so they’re not tracked anymore
+        });
+    }
+
+    return marker;
+
 }
 
 /**
@@ -405,40 +424,33 @@ const createFirePopup = (feature) => {
     const name = props.FireName || 'Not Available';
     const date = props.Ig_Date ? new Date(props.Ig_Date).toLocaleDateString("en-US") : 'Unknown';
     const acres = props.BurnBndAc ? props.BurnBndAc.toLocaleString() : 'Not Available';
+    const cause = props.Cause || 'Unknown';
+    const cost = props.Cost ? props.Cost : 'Not Reported';
+    const livesLost = props.LivesLost ?? 'Not Reported';
+    const structuresLost = props.StrucLost ?? 'Not Reported';
 
-    let html = `<div class="map-popup">`;
+    return `
+        <div class="map-popup">
+            ${isFeatured ? `<div class="popup-label">🔥 Featured Fire</div>` : ''}
+            <h3 class="popup-title">${name}</h3>
+            <p class="popup-subtitle"><strong>Ignited:</strong> ${date}</p>
 
-    // Show the featured badge first, if applicable
-    if (isFeatured) {
-        html += `<h3 class="signal-fire-label"><strong>🔥 Featured Fire</strong></h3>`;
-    }
+            <div class="popup-metrics">
+                <div><strong>Acres:</strong> ${acres}</div>
+                <div><strong>Cost:</strong> ${cost}</div>
+                <div><strong>Lives Lost:</strong> ${livesLost}</div>
+                <div><strong>Structures:</strong> ${structuresLost}</div>
+            </div>
 
-     // Basic fire info (always shown)
-    html += `
-        <h3 class="chart-tooltip">${name}</h3>
-        <p><strong>Ignition Date:</strong> ${date}</p>
-        <p><strong>Acres Burned:</strong> ${acres}</p>
+            ${isFeatured ? `
+                <p class="popup-cause"><strong>Cause:</strong> ${cause}</p>
+                <p class="popup-description">
+                    This fire was selected to illustrate significant trends in wildfire behavior,
+                    community impact, or response.
+                </p>
+            ` : ''}
+        </div>
     `;
-
-   // Additional fields only for featured fires
-    if (isFeatured) {
-        const cause = props.Cause || 'Unknown';
-        const cost = props.Cost ? `$${Number(props.Cost).toLocaleString()}` : 'Not Reported';
-        const livesLost = props.LivesLost ?? 'Not Reported';
-        const structuresLost = props.StrucLost ?? 'Not Reported';
-
-        html += `
-            <p><strong>Cause:</strong> ${cause}</p>
-            <p><strong>Estimated Cost:</strong> ${cost}</p>
-            <p><strong>Lives Lost:</strong> ${livesLost}</p>
-            <p><strong>Structures Lost:</strong> ${structuresLost}</p>
-            <p class="signal-fire-description">
-                This fire was selected to illustrate significant trends in wildfire behavior, community impact, or response.
-            </p>
-        `;
-    }
-
-    return html;
 }
 
 /**
@@ -559,13 +571,19 @@ const filterMapByYear = (year) => {
   .then(response => response.json())
   .then(data => {
     const filteredData = {
-      type: 'FeatureCollection',
-      features: data.features.filter(
-        feature =>
-          feature.properties.Ig_Date?.substring(0, 4) === year &&
-          ['Wildfire', 'Unknown'].includes(feature.properties.Incid_Type)
-      )
-    }
+        type: 'FeatureCollection',
+        features: data.features.filter(feature => {
+            const props = feature.properties;
+            const fireYear = props.Ig_Date?.substring(0, 4);
+            const incType = props.Incid_Type;
+            const acres = parseFloat(props.BurnBndAc || 0);
+
+            const isRelevantType = ['Wildfire', 'Unknown'].includes(incType);
+            const isTargetYear = fireYear === year;
+
+            return isRelevantType && isTargetYear && acres > 500;
+        })
+    };
     // Clear old data (if any)
     if (window.geoJsonLayer) {
       map.removeLayer(window.geoJsonLayer)
@@ -653,7 +671,7 @@ const createCloroplethLegend = () => {
     legendContainer.appendChild(header);  // Append the header to the container
 
     const classes = [
-        { label: 'Wildfires (1984–2025)', iconUrl: 'assets/img/wildfire_igType2.svg' },
+        { label: 'Wildfires (1990–2025)', iconUrl: 'assets/img/wildfire_igType2.svg' },
         { label: 'Featured Fires', iconUrl: 'assets/img/featuredFire.svg' } // Optional
     ];
 
