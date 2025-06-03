@@ -60,10 +60,10 @@ let geoJson;
 let suppressBoundsCheck = false; // Flag to suppress bounds check on initial zoom
 
 // Define thresholds for fire sizes
-const SMALL_FIRE_MAX_ACREAGE = 2500;    // up to 2,500 acres
-const MEDIUM_FIRE_MAX_ACREAGE = 10000;  // up to 10,000 acres
-const LARGE_FIRE_MAX_ACREAGE = 50000;   // up to 50,000 acres
-// Any fire above 50,000 acres is considered a mega fire
+const SMALL_FIRE_MAX_ACREAGE = 1000;    // up to 1,000 acres
+const MEDIUM_FIRE_MAX_ACREAGE = 9999;   // 1,001 to 9,999 acres
+const LARGE_FIRE_MAX_ACREAGE = 99999;   // 10,000 to 99,999 acres
+// Any fire above 100,000 acres is considered a mega fire
 
 // Define fixed sizes for the icons based on proportions
 const BASE_FIRE_SIZE = 12; // Small fire as the visual reference
@@ -401,6 +401,11 @@ const createFireMarker = (feature, latlng) => {
         // Add marker to global list
         featuredFireMarkers.push(marker);
 
+        // Auto-dismiss tooltip after 3 seconds (3000 ms)
+        setTimeout(() => {
+            marker.unbindTooltip();
+        }, 2000);
+
         // Remove tooltip on click (when popup is triggered)
         marker.on('click', function () {
             featuredFireMarkers.forEach(m => m.unbindTooltip());
@@ -613,49 +618,39 @@ const createProportionalLegend = () => {
     const legendContainer = document.getElementById('proportional-container');
     legendContainer.innerHTML = '';  // Clear existing content
 
-    // Create and append the header for the Proportional Legend
+    // Create and append the header
     const header = document.createElement('div');
     header.className = 'column-header-proportional';
     header.textContent = 'Acres Burned:';
-    legendContainer.appendChild(header);  // Append the header to the container
+    legendContainer.appendChild(header);
 
-    // Create icon and label containers
-    const iconContainer = document.createElement("div");
-    iconContainer.className = "icon-container";
-
-    const labelContainer = document.createElement("div");
-    labelContainer.className = "label-container";
-
-    // Define the categories and their labels and sizes
+    // Define the categories with label and icon size
     const categories = [
-        { label: 'Small: -2,5k', size: BASE_FIRE_SIZE },
-        { label: 'Medium: 2.5k-10k', size: MEDIUM_FIRE_SIZE },
-        { label: 'Large: 10k-50k', size: LARGE_FIRE_SIZE },
-        { label: 'Mega: 50k+', size: MEGA_FIRE_SIZE }
+        { label: 'Small: ≤1k', size: BASE_FIRE_SIZE },
+        { label: 'Medium: 1k–9.9k', size: MEDIUM_FIRE_SIZE },
+        { label: 'Large: 10k–99.9k', size: LARGE_FIRE_SIZE },
+        { label: 'Mega: ≥100k', size: MEGA_FIRE_SIZE }
     ];
 
-    // Create the legend items for each category
+    // Generate a row for each icon/label pair
     categories.forEach(category => {
-        // Use the outline fire icon as the default
-        const defaultFireType = 'Outline'; // Replace with actual default type if different
-        const iconUrl = getIconUrlForFireType(defaultFireType);
+        const row = document.createElement('div');
+        row.className = 'legend-item';
 
-        // Create an img element for the fire icon
-        const legendIcon = document.createElement('img');
-        legendIcon.src = iconUrl;
-        legendIcon.style.width = legendIcon.style.height = `${category.size}px`; // Fixed size for each category
-        iconContainer.appendChild(legendIcon);  // Append the icon to the icon container
+        const icon = document.createElement('img');
+        icon.src = getIconUrlForFireType('Outline');  // Or whatever default type
+        icon.style.width = `${category.size}px`;
+        icon.style.height = `${category.size}px`;
+        icon.className = 'legend-icon';
 
-        // Create a div for the label
-        const legendLabel = document.createElement('div');
-        legendLabel.className = 'legendLabel-proportional';
-        legendLabel.textContent = category.label;
-        labelContainer.appendChild(legendLabel);  // Append the label to the label container
+        const label = document.createElement('div');
+        label.textContent = category.label;
+        label.className = 'legend-label';
+
+        row.appendChild(icon);
+        row.appendChild(label);
+        legendContainer.appendChild(row);
     });
-
-    // Append icon and label containers to the legend container
-    legendContainer.appendChild(iconContainer);
-    legendContainer.appendChild(labelContainer);
 };
 
 /**
@@ -667,12 +662,12 @@ const createCloroplethLegend = () => {
     // Create and append the header for the Cloropleth Legend
     const header = document.createElement('div');
     header.className = 'column-header-cloropleth';
-    header.textContent = 'Types of Fire in This Map:';
+    header.textContent = 'Type of Fire:';
     legendContainer.appendChild(header);  // Append the header to the container
 
     const classes = [
-        { label: 'Wildfires (1990–2025)', iconUrl: 'assets/img/wildfire_igType2.svg' },
-        { label: 'Featured Fires', iconUrl: 'assets/img/featuredFire.svg' } // Optional
+        { label: 'Wildfires', iconUrl: 'assets/img/wildfire_igType2.svg' },
+        { label: 'Featured Wildfires', iconUrl: 'assets/img/featuredFire.svg' } // Optional
     ];
 
     classes.forEach(cls => {

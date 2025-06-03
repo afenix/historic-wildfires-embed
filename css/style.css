@@ -916,73 +916,44 @@ svg:not(:root) {
 }
 
 #proportional-container {
-    /* width: 55%; */
-    display: grid; /* Use grid layout */
-    grid-template-columns: auto 1fr; /* Single column for the entire container */
-    grid-template-rows: auto auto 1fr;  /* Row for header, row for icons/labels, flexible row for content */
-    gap: 10px; /* Adds space between the rows */
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    margin-top: 1em;
+    align-items: center;
 }
 
 .column-header-proportional {
-    grid-column: 1 / -1; /* Span across all columns in the grid */
     font-family: "Poppins", sans-serif;
     font-size: 18px;
     font-weight: bold;
     color: #333;
-    text-align: left; /* Align text to the left */
-    padding-left: 10px; /* Padding to align with the content below */
+    text-align: left;
+    width: 100%;
+    margin-bottom: 8px;
 }
 
-.icon-container {
-    display: flex; /* Makes sub-containers flexible */
-    flex-direction: column;
-    justify-content: top;
-    align-items: center;  /* Center items horizontally */
-}
-
-.icon-container img {
-    margin: 10px 0 25px 0;
-}
-
-.icon-container img:nth-child(2) {
-    margin: 0 0 25px 0; /* Slightly reduced margin for the second image */
-}
-
-.icon-container img:nth-child(3) {
-    margin: 0 0 10px 0; /* Reduced margin for the third image */
-}
-
-.icon-container img:nth-child(4) {
-    margin: 0 0 0 0; /* Reduced margin for the third image */
-}
-
-.label-container {
-    grid-row: 2; /* Place label container in the second row */
-    grid-column: 2; /* Place in the second column */
-    align-items: flex-start; /* Align items to the start (left) */
-    text-align: left; /* Align text to the left */
+.legend-item {
     display: flex;
-    flex-direction: column;
-    justify-content: top; /* Align items to the top if necessary */
+    align-items: center;         /* vertical center */
+    gap: 0.6em;
+    margin-bottom: 4px;
+    min-height: 40px;            /* ensures consistent vertical spacing */
 }
 
-.legendLabel-proportional {
+.legend-item img {
+    flex-shrink: 0;
+    display: block;
+}
+
+.legend-label {
     font-family: "Poppins", sans-serif;
     font-size: 16px;
-    margin: 5px 0 20px 0;
-    text-align: left !important; /* Align text to the left */
-}
-
-.legendLabel-proportional:nth-child(2) {
-    margin: 0 0 30px 0; /* Slightly reduced margin for the second image */
-}
-
-.legendLabel-proportional:nth-child(3) {
-    margin: 0 0 28px 0; /* Reduced margin for the third image */
-}
-
-.legendLabel-proportional:nth-child(4) {
-    margin: 0 0 0 0; /* Reduced margin for the fourth image */
+    color: #333;
+    line-height: 1;
+    white-space: nowrap;
+    text-align: left;            /* forces left-align */
+    min-width: 130px;            /* ensures labels line up neatly */
 }
 
 
