@@ -16,15 +16,9 @@ const mapParams = {
 const regions = {
     'USA': {
         tooltip: 'Zoom to Entire U.S.',
-        center: [39.3, -98.5],
-        zoom: 3,
-        bounds: L.latLngBounds([17.5, -179], [72, -65])
-    },
-    'CONUS': {
-        tooltip: 'Zoom to Continental U.S.',
         center: [37.5, -96.5],
-        zoom: 4,
-        bounds: L.latLngBounds([24.396308, -125.0], [49.384358, -66.93457])
+        zoom: 3,
+        bounds: L.latLngBounds([32.396308, -125.0], [49.384358, -66.93457])
     },
     'AK': {
         tooltip: 'Zoom to Alaska',
@@ -112,15 +106,14 @@ document.addEventListener('DOMContentLoaded', function () {
 // Function to instantiate the Leaflet map and custom controls
 const createMap = (containerId, center, zoom) => {
 
-
     // Create the map and set its initial view to the specified coordinates and zoom level
     map = L.map(containerId, {
         center: center,
         zoom: zoom,
         minZoom: 3,
         maxZoom: 10,
-        // Force the user to stay within CONUS longitude/latitude rectangle
-        maxBounds: regions['CONUS'].bounds,
+        // Force the user to stay within USA longitude/latitude rectangle
+        maxBounds: regions['USA'].bounds,
         maxBoundsViscosity: 1.0  // 1.0 = “no slipping” past the edges
     });
 
