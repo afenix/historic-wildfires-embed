@@ -9,8 +9,8 @@
 // Set the Global variables
 const mapParams = {
     'containerID': 'map-container',
-    'center':  [35.3, -105.5],
-    'zoom': 3
+    'center':  [37.5, -96.5],
+    'zoom': 4.25
 }
 // Define regions to create custom zoom control - include center coordinates and zoom levels
 const regions = {
@@ -77,6 +77,10 @@ document.addEventListener('DOMContentLoaded', function () {
     const legendContainer = document.querySelector('.legend-container');
     const yearSlider = document.getElementById('slider');
 
+    // change the map center and zoom based on the screen size
+    const isMobile = window.innerWidth < 768; // any breakpoint you prefer
+    const initialZoom = isMobile ? 5 : 4.25;
+
     createMap(mapParams.containerID, mapParams.center, mapParams.zoom);
 
     // Check the actual visibility using computed style
@@ -115,8 +119,9 @@ const createMap = (containerId, center, zoom) => {
         zoom: zoom,
         minZoom: 3,
         maxZoom: 10,
-        maxBounds: regions['CONUS'], // Start with CONUS
-        maxBoundsViscosity: 0.7 // “resistance” near boundary edge
+        // Force the user to stay within CONUS longitude/latitude rectangle
+        maxBounds: regions['CONUS'].bounds,
+        maxBoundsViscosity: 1.0  // 1.0 = “no slipping” past the edges
     });
 
     // Disable user interactions (but still allow programmatic zoom/pan)
@@ -133,7 +138,7 @@ const createMap = (containerId, center, zoom) => {
             var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom home-button');
             // Style Home button - use Font Awesome's home icon
             container.innerHTML = '<i class="fa-solid fa-house"></i>';
-            container.setAttribute('data-tooltip', 'Zoom to full  extent')
+            container.setAttribute('data-tooltip', 'Zoom to USA')
             container.style.backgroundColor = 'white';
             container.style.width = '34px';
             container.style.height = '36px';
@@ -144,13 +149,9 @@ const createMap = (containerId, center, zoom) => {
             // Attach the event listener to the container
             container.onclick = function() {
                 suppressBoundsCheck = true;
-                 // Update maxBounds based on selected region
-                const region = regions['USA'];
-                if (region.bounds) {
-                    map.setMaxBounds(region.bounds);
-                }
-                // Zoom to center/zoom
-                map.setView(region.center, region.zoom);
+                // Reset the map to the original mapParams center & zoom:
+                map.setMaxBounds(null);
+                map.setView(mapParams.center, mapParams.zoom);
             }
             return container;
         }
@@ -183,7 +184,7 @@ const createMap = (containerId, center, zoom) => {
     map.addControl(new L.Control.UserLocation({ position: 'topleft' }));
 
     // Create and add a custom zoom control for each region
-    Object.keys(regions).forEach(function(regionKey) {
+    ['AK', 'HI'].forEach(function(regionKey) {
         var region = regions[regionKey];
         L.Control.RegionButton = L.Control.extend({
             onAdd: function(map) {
@@ -196,7 +197,7 @@ const createMap = (containerId, center, zoom) => {
 
                 // Style region buttons
                 container.style.backgroundColor = 'white';
-                container.style.width = '40px';
+                container.style.width = '35px';
                 container.style.height = '35px';
                 container.style.display = 'flex';
                 container.style.justifyContent = 'center';
