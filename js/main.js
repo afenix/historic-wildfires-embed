@@ -329,7 +329,7 @@ const loadFireData  = async () => {
 
         // Process data for chart ingestion and create the stacked bar chart
         const lineChartData = createChartData(data);
-        createStackedBarChart(lineChartData);
+        //createStackedBarChart(lineChartData);
 
         // Load the initial year's data
         filterMapByYear(uniqueYears[0]);
